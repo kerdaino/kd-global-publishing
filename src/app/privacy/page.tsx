@@ -35,13 +35,12 @@ export default function PrivacyPage() {
           <PolicyBlock title="How We Use Information">
             We use your information to process purchases, provide secure download
             access, respond to publishing and print inquiries, send order
-            notifications when email is configured, and maintain basic admin
-            records.
+            notifications, and maintain basic admin records.
           </PolicyBlock>
           <PolicyBlock title="Payment & Storage Providers">
             Payments are handled through Paystack. Website data, order records,
             and secure file storage may be handled through Supabase. Email
-            delivery may be handled through Resend when configured.
+            delivery may be handled through Resend.
           </PolicyBlock>
           <PolicyBlock title="Your Choices">
             You can contact us to request correction or removal of inquiry

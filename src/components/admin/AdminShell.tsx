@@ -14,9 +14,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[260px_1fr]">
+    <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-8">
       <AdminSidebar />
-      <div>{children}</div>
+      <div className="min-w-0">{children}</div>
     </div>
   );
 }

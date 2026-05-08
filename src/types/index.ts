@@ -1,4 +1,4 @@
-export type BookStatus = "Available" | "Available Soon" | "Coming Soon";
+export type BookStatus = "Available" | "Available Soon";
 
 export type BookFormat = "eBook PDF" | "Print" | "eBook PDF + Print";
 
@@ -21,8 +21,6 @@ export type Book = {
   format: BookFormat;
   status: BookStatus;
   isPhysicalAvailable?: boolean;
-  // Add a Paystack Payment Page URL here later, or replace this field with
-  // server-generated checkout links when Paystack API integration is added.
   paymentLink: string;
   downloadFilePath?: string;
 };

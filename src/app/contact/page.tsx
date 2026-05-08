@@ -15,7 +15,7 @@ export const metadata: Metadata = createPageMetadata({
 const contactCards = [
   {
     title: "Book orders",
-    text: "Ask about available eBooks, coming soon titles, payment links, and how to receive your copy.",
+    text: "Ask about available eBooks, upcoming releases, secure checkout, and how to receive your copy.",
     href: "/bookstore",
   },
   {
@@ -30,13 +30,14 @@ const contactCards = [
   },
   {
     title: "Print request",
-    text: "Request support for future physical copies, print-ready preparation, and production coordination.",
+    text: "Request support for physical copies, print-ready preparation, and production coordination.",
     href: "/print-request",
   },
 ];
 
 export default function ContactPage() {
-  const whatsappUrl = `https://wa.me/${site.whatsapp.replace(/\D/g, "")}`;
+  const whatsappNumber = site.whatsapp.replace(/\D/g, "");
+  const whatsappUrl = `https://wa.me/${whatsappNumber}`;
 
   return (
     <section className="bg-neutral-50 px-6 py-16 sm:py-20">
@@ -45,7 +46,7 @@ export default function ContactPage() {
           <SectionHeader
             eyebrow="Publishing Inquiry"
             title="Start a conversation about your book or message."
-            description="Use this page for book orders, publishing support, sermon-to-book projects, and future physical printing inquiries."
+            description="Use this page for book orders, publishing support, sermon-to-book projects, and physical printing inquiries."
             headingLevel="h1"
           />
           <div className="mt-8 grid gap-4">
@@ -65,17 +66,21 @@ export default function ContactPage() {
           </div>
           <div className="mt-6 rounded-lg bg-neutral-950 p-6 text-sm leading-7 text-neutral-300 shadow-sm">
             <p className="font-bold text-white">Contact details</p>
-            <p className="mt-4 text-white">{site.email}</p>
-            <p>{site.phone}</p>
-            <p>{site.address}</p>
-            <Link
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 inline-flex min-h-11 w-fit items-center justify-center rounded-md bg-green-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-green-700"
-            >
-              Chat on WhatsApp
+            <Link href={`mailto:${site.email}`} className="mt-4 block w-fit text-white transition hover:text-red-200">
+              {site.email}
             </Link>
+            {site.phone ? <p>{site.phone}</p> : null}
+            <p>{site.address}</p>
+            {whatsappNumber ? (
+              <Link
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-3 inline-flex min-h-11 w-fit items-center justify-center rounded-md bg-green-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-green-700"
+              >
+                Chat on WhatsApp
+              </Link>
+            ) : null}
           </div>
         </div>
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { updateOrderDeliveryStatus } from "@/app/admin/actions";
+import { AdminOrderActions } from "@/components/admin/AdminOrderActions";
 import { AdminTable, AdminTd, AdminTh } from "@/components/admin/AdminTable";
 import { requireAdmin } from "@/lib/admin";
 import { createAdminClient } from "@/lib/supabase/server";
@@ -52,7 +53,7 @@ export default async function AdminOrdersPage({
           <Link
             key={item}
             href={`/admin/orders?status=${item}`}
-            className="rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm font-bold capitalize text-neutral-700 transition hover:border-red-700 hover:text-red-700"
+            className="inline-flex min-h-11 items-center justify-center rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm font-bold capitalize text-neutral-700 transition hover:border-red-700 hover:text-red-700"
           >
             {item}
           </Link>
@@ -67,6 +68,7 @@ export default async function AdminOrdersPage({
             <AdminTh>Payment</AdminTh>
             <AdminTh>Reference</AdminTh>
             <AdminTh>Delivery</AdminTh>
+            <AdminTh>Actions</AdminTh>
           </tr>
         </thead>
         <tbody className="divide-y divide-neutral-200">
@@ -86,20 +88,35 @@ export default async function AdminOrdersPage({
               <AdminTd>
                 <form action={updateOrderDeliveryStatus} className="flex gap-2">
                   <input type="hidden" name="id" value={order.id} />
+                  <label htmlFor={`delivery-status-${order.id}`} className="sr-only">
+                    Delivery status
+                  </label>
                   <select
+                    id={`delivery-status-${order.id}`}
                     name="delivery_status"
                     defaultValue={order.delivery_status || "pending"}
-                    className="rounded-md border border-neutral-300 px-3 py-2"
+                    className="min-h-11 rounded-md border border-neutral-300 px-3 py-2"
                   >
                     <option value="pending">Pending</option>
                     <option value="download_sent">Download sent</option>
                     <option value="fulfilled">Fulfilled</option>
                     <option value="failed">Failed</option>
                   </select>
-                  <button className="rounded-md bg-red-700 px-3 py-2 text-xs font-bold text-white">
+                  <button className="min-h-11 rounded-md bg-red-700 px-3 py-2 text-xs font-bold text-white">
                     Save
                   </button>
                 </form>
+              </AdminTd>
+              <AdminTd>
+                <div className="grid gap-3">
+                  <Link
+                    href={`/admin/orders/${order.id}`}
+                    className="inline-flex min-h-11 w-fit items-center justify-center rounded-md border border-neutral-300 px-3 py-2 text-xs font-bold text-neutral-950 transition hover:border-red-700 hover:text-red-700"
+                  >
+                    View details
+                  </Link>
+                  <AdminOrderActions orderId={order.id} />
+                </div>
               </AdminTd>
             </tr>
           ))}

@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 
 type FormState = "idle" | "loading" | "success" | "error";
 
 export function ContactInquiryForm() {
   const [state, setState] = useState<FormState>("idle");
   const [message, setMessage] = useState("");
+  const formId = useId();
+  const messageId = `${formId}-form-message`;
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -51,28 +53,30 @@ export function ContactInquiryForm() {
   return (
     <form
       onSubmit={handleSubmit}
+      aria-describedby={message ? messageId : undefined}
       className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm sm:p-8"
     >
       <div aria-hidden="true" className="hidden">
-        <label>
+        <label htmlFor={`${formId}-website`}>
           Website
-          <input name="website" tabIndex={-1} autoComplete="off" />
+          <input id={`${formId}-website`} name="website" tabIndex={-1} autoComplete="off" />
         </label>
       </div>
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field label="Full name" name="name" placeholder="Your name" required />
+        <Field id={`${formId}-name`} label="Full name" name="name" placeholder="Your name" required />
         <Field
+          id={`${formId}-email`}
           label="Email address"
           name="email"
           type="email"
-          placeholder="you@example.com"
           required
         />
-        <Field label="WhatsApp number" name="whatsapp" placeholder="+234..." />
+        <Field id={`${formId}-whatsapp`} label="WhatsApp number optional" name="whatsapp" />
       </div>
-      <label className="mt-5 grid gap-2 text-sm font-semibold text-neutral-800">
+      <label htmlFor={`${formId}-project-type`} className="mt-5 grid gap-2 text-sm font-semibold text-neutral-800">
         Project type
         <select
+          id={`${formId}-project-type`}
           name="projectType"
           className="min-h-12 rounded-md border border-neutral-300 px-4 text-base font-normal outline-none transition focus:border-red-700 focus:ring-4 focus:ring-red-100"
           defaultValue=""
@@ -87,9 +91,10 @@ export function ContactInquiryForm() {
           <option>Other</option>
         </select>
       </label>
-      <label className="mt-5 grid gap-2 text-sm font-semibold text-neutral-800">
+      <label htmlFor={`${formId}-message`} className="mt-5 grid gap-2 text-sm font-semibold text-neutral-800">
         Message
         <textarea
+          id={`${formId}-message`}
           name="message"
           rows={7}
           required
@@ -106,6 +111,8 @@ export function ContactInquiryForm() {
       </button>
       {message ? (
         <p
+          id={messageId}
+          role={state === "error" ? "alert" : "status"}
           className={
             state === "success"
               ? "mt-4 rounded-md bg-neutral-950 p-4 text-sm font-semibold text-white"
@@ -120,12 +127,14 @@ export function ContactInquiryForm() {
 }
 
 function Field({
+  id,
   label,
   name,
   type = "text",
   placeholder,
   required,
 }: {
+  id: string;
   label: string;
   name: string;
   type?: string;
@@ -133,9 +142,10 @@ function Field({
   required?: boolean;
 }) {
   return (
-    <label className="grid gap-2 text-sm font-semibold text-neutral-800">
+    <label htmlFor={id} className="grid gap-2 text-sm font-semibold text-neutral-800">
       {label}
       <input
+        id={id}
         type={type}
         name={name}
         placeholder={placeholder}

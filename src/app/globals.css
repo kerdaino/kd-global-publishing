@@ -20,9 +20,13 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 96px;
+  width: 100%;
+  overflow-x: clip;
 }
 
 body {
+  width: 100%;
+  overflow-x: clip;
   min-height: 100vh;
   background: var(--background);
   color: var(--foreground);
@@ -40,4 +44,15 @@ input,
 select,
 textarea {
   outline-offset: 3px;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline: 3px solid #b91c1c;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px #fee2e2;
 }

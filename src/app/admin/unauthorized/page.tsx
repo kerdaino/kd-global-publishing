@@ -15,8 +15,8 @@ export default function AdminUnauthorizedPage() {
         You do not have admin access.
       </h1>
       <p className="mt-4 text-neutral-650">
-        Your account is signed in, but it is not listed in the `admin_users`
-        table.
+        Your account is signed in, but it has not been granted administrator
+        access.
       </p>
       <Link
         href="/admin/login"

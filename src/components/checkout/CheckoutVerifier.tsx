@@ -16,13 +16,7 @@ type VerifyState = {
   };
 };
 
-export function CheckoutVerifier({
-  reference,
-  debugSearchParams,
-}: {
-  reference?: string;
-  debugSearchParams?: Record<string, string | string[] | undefined>;
-}) {
+export function CheckoutVerifier({ reference }: { reference?: string }) {
   const [state, setState] = useState<VerifyState>({
     status: "loading",
     message: "Verifying your payment...",
@@ -56,7 +50,7 @@ export function CheckoutVerifier({
           status: "success",
           message: result.data?.emailSent
             ? "Payment confirmed. Your download email has been prepared."
-            : "Payment confirmed. You can download your book from this page.",
+            : "Your payment was successful. You can download your book below. If you need help, contact support.",
           details: result.data,
         });
       } catch {
@@ -83,7 +77,10 @@ export function CheckoutVerifier({
             ? "We could not verify this payment."
             : "Verifying payment..."}
       </h1>
-      <p className="mt-5 text-base leading-8 text-neutral-650">
+      <p
+        role={state.status === "loading" ? "status" : state.status === "error" ? "alert" : undefined}
+        className="mt-5 text-base leading-8 text-neutral-650"
+      >
         {state.message}
       </p>
       {state.details ? (
@@ -106,26 +103,14 @@ export function CheckoutVerifier({
           >
             Download your book
           </Link>
-          {!state.details.emailSent ? (
-            <p className="mt-4 text-sm leading-7 text-neutral-650">
-              Email delivery is not configured yet, so keep this page or open
-              the download link now.
-            </p>
-          ) : null}
-          {process.env.NODE_ENV === "development" ? (
-            <p className="mt-4 break-all rounded-md bg-white p-3 text-xs leading-6 text-neutral-600">
-              {state.details.downloadUrl}
-            </p>
-          ) : null}
           <p className="mt-4 text-sm leading-7 text-neutral-650">
             {downloadPolicyText()}
           </p>
+          <p className="mt-4 rounded-md bg-white p-4 text-sm leading-7 text-neutral-650">
+            Need help with your order or download? Contact support from the
+            contact page and include your payment reference.
+          </p>
         </div>
-      ) : null}
-      {!reference && process.env.NODE_ENV === "development" ? (
-        <pre className="mt-6 overflow-auto rounded-md bg-neutral-950 p-4 text-left text-xs leading-6 text-white">
-          {JSON.stringify(debugSearchParams || {}, null, 2)}
-        </pre>
       ) : null}
       <Link
         href="/bookstore"

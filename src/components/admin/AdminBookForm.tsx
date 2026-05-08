@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 export type AdminAuthorOption = {
@@ -36,6 +36,18 @@ export type AdminBookFormValue = {
 type FormState = "idle" | "submitting" | "success" | "error";
 type UploadKey = "cover" | "ebook" | "sample";
 type UploadState = "idle" | "selected" | "uploading" | "uploaded" | "error";
+
+const coverImageRules = {
+  maxSize: 5 * 1024 * 1024,
+  minWidth: 1000,
+  minHeight: 1600,
+  targetRatio: 5 / 8,
+  ratioTolerance: 0.01,
+};
+
+const ebookFileRules = {
+  maxSize: 50 * 1024 * 1024,
+};
 
 const uploadConfig = {
   cover: {
@@ -92,6 +104,8 @@ export function AdminBookForm({
   mode: "create" | "edit";
 }) {
   const router = useRouter();
+  const formId = useId();
+  const messageId = `${formId}-form-message`;
   const [state, setState] = useState<FormState>("idle");
   const [message, setMessage] = useState("");
   const [title, setTitle] = useState(book?.title || "");
@@ -177,7 +191,7 @@ export function AdminBookForm({
         continue;
       }
 
-      validateFile(key, file);
+      await validateFile(key, file);
       setUploadStates((current) => ({ ...current, [key]: "uploading" }));
 
       const path = buildStoragePath(slug || String(formData.get("slug") || ""), config.kind, file);
@@ -196,10 +210,6 @@ export function AdminBookForm({
         const { data } = supabase.storage.from(config.bucket).getPublicUrl(path);
         formData.set(config.hiddenUrlName, data.publicUrl);
         nextAssetValues[config.hiddenUrlName] = data.publicUrl;
-
-        if (config.hiddenUrlName === "cover_image_url") {
-          console.log("Uploaded cover_image_url:", data.publicUrl);
-        }
       }
 
       if ("hiddenPathName" in config) {
@@ -214,14 +224,14 @@ export function AdminBookForm({
     setAssetValues(nextAssetValues);
   }
 
-  function handleFileChange(key: UploadKey, file: File | null) {
+  async function handleFileChange(key: UploadKey, file: File | null) {
     if (!file) {
       setUploadStates((current) => ({ ...current, [key]: "idle" }));
       return;
     }
 
     try {
-      validateFile(key, file);
+      await validateFile(key, file);
       setUploadStates((current) => ({ ...current, [key]: "selected" }));
       setMessage("");
       if (state === "error") {
@@ -237,11 +247,13 @@ export function AdminBookForm({
   return (
     <form
       onSubmit={handleSubmit}
+      aria-describedby={message ? messageId : undefined}
       className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm"
     >
       <div className="grid gap-5 md:grid-cols-2">
-        <Field label="Title" name="title" value={title} onChange={handleTitleChange} required />
+        <Field id={`${formId}-title`} label="Title" name="title" value={title} onChange={handleTitleChange} required />
         <Field
+          id={`${formId}-slug`}
           label="Slug"
           name="slug"
           value={slug}
@@ -251,10 +263,11 @@ export function AdminBookForm({
           }}
           required
         />
-        <Field label="Subtitle" name="subtitle" defaultValue={book?.subtitle} />
-        <label className="grid gap-2 text-sm font-semibold text-neutral-800">
+        <Field id={`${formId}-subtitle`} label="Subtitle" name="subtitle" defaultValue={book?.subtitle} />
+        <label htmlFor={`${formId}-author`} className="grid gap-2 text-sm font-semibold text-neutral-800">
           Author
           <select
+            id={`${formId}-author`}
             name="author_id"
             defaultValue={book?.author_id || ""}
             disabled={authorMode === "new"}
@@ -268,8 +281,10 @@ export function AdminBookForm({
             ))}
           </select>
         </label>
-        <label className="flex items-center gap-2 text-sm font-semibold text-neutral-800">
+        <label htmlFor={`${formId}-create-author`} className="flex items-center gap-2 text-sm font-semibold text-neutral-800">
           <input
+            id={`${formId}-create-author`}
+            aria-describedby={`${formId}-new-author-description`}
             type="checkbox"
             checked={authorMode === "new"}
             onChange={(event) =>
@@ -277,16 +292,20 @@ export function AdminBookForm({
             }
           />
           Create a new author quickly
+          <span id={`${formId}-new-author-description`} className="sr-only">
+            Disables the author selector and shows fields for a new author.
+          </span>
         </label>
         {authorMode === "new" ? (
           <>
-            <Field label="New author name" name="new_author_name" />
-            <Field label="New author email" name="new_author_email" type="email" />
+            <Field id={`${formId}-new-author-name`} label="New author name" name="new_author_name" />
+            <Field id={`${formId}-new-author-email`} label="New author email" name="new_author_email" type="email" />
           </>
         ) : null}
-        <label className="grid gap-2 text-sm font-semibold text-neutral-800">
+        <label htmlFor={`${formId}-category`} className="grid gap-2 text-sm font-semibold text-neutral-800">
           Category
           <select
+            id={`${formId}-category`}
             name="category"
             defaultValue={book?.category || "Christian Living"}
             className="min-h-12 rounded-md border border-neutral-300 px-4"
@@ -299,35 +318,40 @@ export function AdminBookForm({
           </select>
         </label>
         <Field
+          id={`${formId}-price`}
           label="Price"
           name="price"
           type="number"
           defaultValue={book?.price ?? 0}
           required
         />
-        <Field label="Currency" name="currency" defaultValue={book?.currency || "NGN"} />
+        <Field id={`${formId}-currency`} label="Currency" name="currency" defaultValue={book?.currency || "NGN"} />
         <UploadField
+          id={`${formId}-cover-file`}
           configKey="cover"
           currentValue={assetValues.cover_image_url}
           state={uploadStates.cover}
           onFileChange={handleFileChange}
         />
         <UploadField
+          id={`${formId}-ebook-file`}
           configKey="ebook"
           currentValue={assetValues.ebook_file_path}
           state={uploadStates.ebook}
           onFileChange={handleFileChange}
         />
         <UploadField
+          id={`${formId}-sample-file`}
           configKey="sample"
           currentValue={assetValues.sample_file_url}
           state={uploadStates.sample}
           onFileChange={handleFileChange}
         />
-        <Field label="Format" name="format" defaultValue={book?.format || "PDF eBook"} />
-        <label className="grid gap-2 text-sm font-semibold text-neutral-800">
+        <Field id={`${formId}-format`} label="Format" name="format" defaultValue={book?.format || "PDF eBook"} />
+        <label htmlFor={`${formId}-status`} className="grid gap-2 text-sm font-semibold text-neutral-800">
           Status
           <select
+            id={`${formId}-status`}
             name="status"
             defaultValue={book?.status || "draft"}
             className="min-h-12 rounded-md border border-neutral-300 px-4"
@@ -345,17 +369,20 @@ export function AdminBookForm({
       <input type="hidden" name="sample_file_path" value={assetValues.sample_file_path} />
 
       <Textarea
+        id={`${formId}-short-description`}
         label="Short description"
         name="short_description"
         defaultValue={book?.short_description}
       />
       <Textarea
+        id={`${formId}-description`}
         label="Full description"
         name="description"
         defaultValue={book?.description}
         rows={8}
       />
       <Textarea
+        id={`${formId}-what-readers-will-learn`}
         label="What readers will learn"
         name="what_readers_will_learn"
         defaultValue={linesToTextareaValue(book?.what_readers_will_learn)}
@@ -368,25 +395,28 @@ export function AdminBookForm({
         </summary>
         <div className="mt-4 grid gap-5 md:grid-cols-2">
           <Field
+            id={`${formId}-ebook-file-url`}
             label="Fallback eBook file URL"
             name="ebook_file_url"
             defaultValue={book?.ebook_file_url}
           />
-          <Field label="Payment link" name="payment_link" defaultValue={book?.payment_link} />
+          <Field id={`${formId}-payment-link`} label="Payment link" name="payment_link" defaultValue={book?.payment_link} />
         </div>
       </details>
 
       <div className="mt-5 flex flex-wrap gap-5">
-        <label className="flex items-center gap-2 text-sm font-semibold text-neutral-800">
+        <label htmlFor={`${formId}-is-featured`} className="flex items-center gap-2 text-sm font-semibold text-neutral-800">
           <input
+            id={`${formId}-is-featured`}
             type="checkbox"
             name="is_featured"
             defaultChecked={Boolean(book?.is_featured)}
           />
           Featured
         </label>
-        <label className="flex items-center gap-2 text-sm font-semibold text-neutral-800">
+        <label htmlFor={`${formId}-is-physical-available`} className="flex items-center gap-2 text-sm font-semibold text-neutral-800">
           <input
+            id={`${formId}-is-physical-available`}
             type="checkbox"
             name="is_physical_available"
             defaultChecked={Boolean(book?.is_physical_available)}
@@ -410,6 +440,8 @@ export function AdminBookForm({
       </button>
       {message ? (
         <p
+          id={messageId}
+          role={state === "error" ? "alert" : "status"}
           className={
             state === "success"
               ? "mt-4 rounded-md bg-neutral-950 p-4 text-sm font-semibold text-white"
@@ -424,19 +456,21 @@ export function AdminBookForm({
 }
 
 function UploadField({
+  id,
   configKey,
   currentValue,
   state,
   onFileChange,
 }: {
+  id: string;
   configKey: UploadKey;
   currentValue: string;
   state: UploadState;
-  onFileChange: (key: UploadKey, file: File | null) => void;
+  onFileChange: (key: UploadKey, file: File | null) => void | Promise<void>;
 }) {
   const config = uploadConfig[configKey];
   const statusText = {
-    idle: currentValue ? "Current file saved. Choose a new file to replace it." : "Optional. You can add this later.",
+    idle: currentValue ? "Current file saved. Choose a new file to replace it." : "No file selected.",
     selected: "Ready to upload when you save.",
     uploading: "Uploading...",
     uploaded: "Uploaded.",
@@ -444,23 +478,36 @@ function UploadField({
   }[state];
 
   return (
-    <label className="grid gap-2 text-sm font-semibold text-neutral-800">
+    <label htmlFor={id} className="grid gap-2 text-sm font-semibold text-neutral-800">
       {config.label}
       <input
+        id={id}
         name={config.inputName}
         type="file"
         accept={config.accept}
         onChange={(event) => onFileChange(configKey, event.currentTarget.files?.[0] || null)}
         className="min-h-12 rounded-md border border-neutral-300 px-4 py-3 text-base font-normal file:mr-4 file:rounded-md file:border-0 file:bg-neutral-950 file:px-4 file:py-2 file:text-sm file:font-bold file:text-white"
       />
+      {configKey === "cover" ? (
+        <span className="text-xs font-semibold text-neutral-500">
+          Recommended cover size: 1600 × 2560px, JPG/PNG/WebP, max 5MB.
+        </span>
+      ) : null}
+      {configKey === "ebook" ? (
+        <span className="text-xs font-semibold text-neutral-500">
+          Upload final eBook file in PDF or EPUB format. Max size: 50MB.
+        </span>
+      ) : null}
       {configKey === "cover" && currentValue ? (
-        <span className="overflow-hidden rounded-md border border-neutral-200 bg-neutral-50">
+        <span className="aspect-[5/8] w-28 overflow-hidden rounded-md border border-neutral-200 bg-neutral-50">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={currentValue} alt="Current book cover" className="h-32 w-full object-contain" />
+          <img src={currentValue} alt="Current book cover" className="h-full w-full object-cover" />
         </span>
       ) : null}
       {currentValue && configKey !== "cover" ? (
-        <span className="truncate text-xs font-normal text-neutral-600">{currentValue}</span>
+        <span className="truncate text-xs font-normal text-neutral-600">
+          Current {config.label}: {currentValue}
+        </span>
       ) : null}
       <span className="text-xs font-semibold text-neutral-500">{statusText}</span>
     </label>
@@ -468,6 +515,7 @@ function UploadField({
 }
 
 function Field({
+  id,
   label,
   name,
   type = "text",
@@ -476,6 +524,7 @@ function Field({
   onChange,
   required,
 }: {
+  id: string;
   label: string;
   name: string;
   type?: string;
@@ -485,9 +534,10 @@ function Field({
   required?: boolean;
 }) {
   return (
-    <label className="grid gap-2 text-sm font-semibold text-neutral-800">
+    <label htmlFor={id} className="grid gap-2 text-sm font-semibold text-neutral-800">
       {label}
       <input
+        id={id}
         name={name}
         type={type}
         value={value}
@@ -501,20 +551,23 @@ function Field({
 }
 
 function Textarea({
+  id,
   label,
   name,
   defaultValue,
   rows = 4,
 }: {
+  id: string;
   label: string;
   name: string;
   defaultValue?: string | null;
   rows?: number;
 }) {
   return (
-    <label className="mt-5 grid gap-2 text-sm font-semibold text-neutral-800">
+    <label htmlFor={id} className="mt-5 grid gap-2 text-sm font-semibold text-neutral-800">
       {label}
       <textarea
+        id={id}
         name={name}
         rows={rows}
         defaultValue={defaultValue || ""}
@@ -532,7 +585,7 @@ function slugify(value: string) {
     .replace(/^-+|-+$/g, "");
 }
 
-function validateFile(key: UploadKey, file: File) {
+async function validateFile(key: UploadKey, file: File) {
   const config = uploadConfig[key];
   const extension = getExtension(file.name);
   const allowedTypes: readonly string[] = config.allowedTypes;
@@ -542,6 +595,32 @@ function validateFile(key: UploadKey, file: File) {
 
   if (!hasAllowedType && !hasAllowedExtension) {
     throw new Error(`${config.label} must be ${config.allowedExtensions.join(", ")}.`);
+  }
+
+  if (key === "ebook" && file.size > ebookFileRules.maxSize) {
+    throw new Error("eBook file must be 50MB or less.");
+  }
+
+  if (key !== "cover") {
+    return;
+  }
+
+  if (file.size > coverImageRules.maxSize) {
+    throw new Error("Cover image must be 5MB or less.");
+  }
+
+  const { width, height } = await getImageDimensions(file);
+
+  if (width < coverImageRules.minWidth || height < coverImageRules.minHeight) {
+    throw new Error(
+      "Cover image is too small. Please upload at least 1000px wide by 1600px tall.",
+    );
+  }
+
+  const ratio = width / height;
+
+  if (Math.abs(ratio - coverImageRules.targetRatio) > coverImageRules.ratioTolerance) {
+    throw new Error("Cover image must be portrait format, ideally 1600px by 2560px.");
   }
 }
 
@@ -566,6 +645,25 @@ function extensionFromType(type: string) {
   };
 
   return types[type];
+}
+
+function getImageDimensions(file: File) {
+  return new Promise<{ width: number; height: number }>((resolve, reject) => {
+    const image = new Image();
+    const objectUrl = URL.createObjectURL(file);
+
+    image.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      resolve({ width: image.naturalWidth, height: image.naturalHeight });
+    };
+
+    image.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error("Cover image must be a readable JPG, PNG, or WebP file."));
+    };
+
+    image.src = objectUrl;
+  });
 }
 
 function linesToTextareaValue(value: string[] | null | undefined) {

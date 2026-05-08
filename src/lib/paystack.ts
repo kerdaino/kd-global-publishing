@@ -123,14 +123,7 @@ export async function verifyPaystackTransaction(reference: string) {
     },
   );
 
-  const result = (await response.json()) as PaystackVerifyResponse;
-  console.log("Paystack verify response status:", {
-    status: result.status,
-    transactionStatus: result.data?.status,
-    reference: result.data?.reference || reference,
-  });
-
-  return result;
+  return (await response.json()) as PaystackVerifyResponse;
 }
 
 export function verifyPaystackWebhookSignature(body: string, signature: string) {
@@ -228,8 +221,6 @@ export async function fulfillPaidOrder({
         .update({ delivery_status: "download_sent" })
         .eq("id", typedOrder.id);
     }
-  } else if (shouldSendEmail) {
-    console.log("Order emails skipped because Resend is not configured.");
   }
 
   return {

@@ -13,23 +13,23 @@ export const metadata: Metadata = createPageMetadata({
   path: "/",
 });
 
-const businessArms = [
+const whatWeDo = [
   {
-    title: "eBook Sales",
+    title: "eBook Publishing & Sales",
     description:
-      "A focused Christian bookstore for digital books, devotionals, teaching resources, and ministry titles.",
+      "A growing Christian bookstore for eBooks, devotionals, ministry resources, teaching series, and faith-based titles.",
     href: "/bookstore",
   },
   {
     title: "Publishing Services",
     description:
-      "Editing, expansion, rewriting support, formatting, cover direction, launch support, and print preparation.",
+      "Editing, manuscript expansion, formatting, cover design direction, publishing support, and print preparation for authors and ministries.",
     href: "/publishing-services",
   },
   {
     title: "Sermon-to-Book Production",
     description:
-      "We turn sermons, retreats, conference messages, and teaching series into books that keep serving readers.",
+      "We help transform sermons, conference teachings, retreats, and message series into books that continue impacting lives long after the meeting ends.",
     href: "/sermon-to-book",
   },
 ];
@@ -85,8 +85,8 @@ export default async function Home() {
               Write. Edit. Publish. Sell. Distribute.
             </h2>
             <p className="mt-4 text-base leading-8 text-neutral-300">
-              Built for Christian books, sermon resources, eBooks, and future
-              physical print coordination under the KD Global brand.
+              Built for Christian books, sermon resources, eBooks, and physical
+              print coordination under the KD Global brand.
             </p>
             <div className="mt-8 grid gap-3">
               {["Manuscripts", "Sermons", "Teachings", "Devotionals"].map(
@@ -127,23 +127,28 @@ export default async function Home() {
       <section className="bg-white px-6 py-16 sm:py-20">
         <div className="mx-auto max-w-6xl">
           <SectionHeader
-            eyebrow="Business arms"
-            title="A complete Christian publishing house."
-            description="The platform is designed around sales, services, and sermon-to-book production so the business can grow beyond a simple website."
+            eyebrow="What We Do"
+            title="More than a bookstore."
+            description="KD Global Publishing House is built to help Christian books, teachings, and ministry resources reach readers through digital publishing, publishing support, and sermon-to-book production."
           />
-          <div className="mt-10 grid gap-6 lg:grid-cols-3">
-            {businessArms.map((arm) => (
+          <div className="mt-10 grid gap-6 md:grid-cols-3">
+            {whatWeDo.map((item, index) => (
               <Link
-                key={arm.title}
-                href={arm.href}
-                className="group rounded-lg border border-neutral-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-red-200 hover:shadow-lg"
+                key={item.title}
+                href={item.href}
+                className="group relative overflow-hidden rounded-lg border border-neutral-200 bg-white p-6 shadow-sm transition duration-200 hover:-translate-y-1 hover:border-red-200 hover:shadow-xl"
               >
-                <div className="mb-5 h-1.5 w-14 rounded-full bg-red-700" />
-                <h3 className="text-2xl font-black text-neutral-950 group-hover:text-red-700">
-                  {arm.title}
+                <div className="mb-6 flex items-center justify-between gap-4">
+                  <span className="h-1.5 w-14 rounded-full bg-red-700" />
+                  <span className="text-sm font-black text-neutral-300">
+                    0{index + 1}
+                  </span>
+                </div>
+                <h3 className="text-2xl font-black tracking-tight text-neutral-950 transition group-hover:text-red-700">
+                  {item.title}
                 </h3>
-                <p className="mt-4 text-sm leading-7 text-neutral-650">
-                  {arm.description}
+                <p className="mt-4 text-sm leading-7 text-neutral-650 md:text-base">
+                  {item.description}
                 </p>
               </Link>
             ))}
@@ -214,7 +219,7 @@ export default async function Home() {
 
       <CTASection
         title="KD Global Publishing House is ready to build with authors and ministries."
-        description="From the first eBook to future print distribution, the platform is prepared for a serious Christian publishing business."
+        description="From eBook publishing to print distribution planning, the platform is prepared for a serious Christian publishing business."
         primaryLabel="Contact Us"
         primaryHref="/contact"
         secondaryLabel="View Services"

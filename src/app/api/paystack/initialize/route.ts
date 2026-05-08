@@ -50,7 +50,6 @@ export async function POST(request: Request) {
     const reference = createPaymentReference();
     const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || getBaseUrl()).replace(/\/$/, "");
     const callbackUrl = `${siteUrl}/checkout/success`;
-    console.log("Paystack callback_url:", callbackUrl);
 
     const { data: order, error: orderError } = await supabase
       .from("orders")

@@ -112,19 +112,33 @@ export default async function AdminBooksPage({
               className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm"
             >
               <summary className="cursor-pointer">
-                <span className="font-black text-neutral-950">{book.title}</span>
-                <span className="ml-3 rounded-md bg-neutral-100 px-3 py-1 text-sm font-semibold text-neutral-700">
-                  {book.status}
-                </span>
-                {book.is_featured ? (
-                  <span className="ml-2 rounded-md bg-red-50 px-3 py-1 text-sm font-semibold text-red-700">
-                    Featured
+                <span className="inline-flex items-center gap-4 align-middle">
+                  {book.cover_image_url ? (
+                    <span className="aspect-[5/8] w-14 shrink-0 overflow-hidden rounded-md bg-neutral-100">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={book.cover_image_url}
+                        alt={`${book.title} cover`}
+                        className="h-full w-full object-cover"
+                      />
+                    </span>
+                  ) : null}
+                  <span>
+                    <span className="font-black text-neutral-950">{book.title}</span>
+                    <span className="ml-3 rounded-md bg-neutral-100 px-3 py-1 text-sm font-semibold text-neutral-700">
+                      {book.status}
+                    </span>
+                    {book.is_featured ? (
+                      <span className="ml-2 rounded-md bg-red-50 px-3 py-1 text-sm font-semibold text-red-700">
+                        Featured
+                      </span>
+                    ) : null}
                   </span>
-                ) : null}
+                </span>
               </summary>
               <Link
                 href={`/admin/books/${book.id}/edit`}
-                className="mt-5 inline-flex rounded-md bg-neutral-950 px-4 py-2 text-sm font-bold text-white transition hover:bg-red-700"
+                className="mt-5 inline-flex min-h-11 items-center justify-center rounded-md bg-neutral-950 px-4 py-2 text-sm font-bold text-white transition hover:bg-red-700"
               >
                 Open full editor
               </Link>
@@ -176,8 +190,8 @@ function FilterLink({
       href={href}
       className={
         active
-          ? "rounded-md bg-neutral-950 px-4 py-2 text-sm font-bold text-white"
-          : "rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm font-bold text-neutral-700 transition hover:border-red-700 hover:text-red-700"
+          ? "inline-flex min-h-11 items-center justify-center rounded-md bg-neutral-950 px-4 py-2 text-sm font-bold text-white"
+          : "inline-flex min-h-11 items-center justify-center rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm font-bold text-neutral-700 transition hover:border-red-700 hover:text-red-700"
       }
     >
       {label}

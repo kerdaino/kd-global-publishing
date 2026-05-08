@@ -16,16 +16,15 @@ export default async function AdminLoginPage({
     <div className="mx-auto max-w-xl">
       <h1 className="text-4xl font-black text-neutral-950">Admin Login</h1>
       <p className="mt-3 text-base leading-8 text-neutral-650">
-        Sign in with Supabase Auth. Only emails listed in `admin_users` can
-        access the dashboard.
+        Sign in with your KD Global Publishing House administrator account.
       </p>
       {params.setup ? (
-        <p className="mt-5 rounded-md bg-red-50 p-4 text-sm font-semibold text-red-700">
-          Supabase admin environment variables are not fully configured.
+        <p role="alert" className="mt-5 rounded-md bg-red-50 p-4 text-sm font-semibold text-red-700">
+          Admin sign-in is not available right now. Please contact the site owner.
         </p>
       ) : null}
       {params.error ? (
-        <p className="mt-5 rounded-md bg-red-50 p-4 text-sm font-semibold text-red-700">
+        <p role="alert" className="mt-5 rounded-md bg-red-50 p-4 text-sm font-semibold text-red-700">
           {params.error}
         </p>
       ) : null}
@@ -33,18 +32,20 @@ export default async function AdminLoginPage({
         action={loginAdmin}
         className="mt-8 rounded-lg border border-neutral-200 bg-white p-6 shadow-sm"
       >
-        <label className="grid gap-2 text-sm font-semibold text-neutral-800">
+        <label htmlFor="admin-email" className="grid gap-2 text-sm font-semibold text-neutral-800">
           Email
           <input
+            id="admin-email"
             type="email"
             name="email"
             required
             className="min-h-12 rounded-md border border-neutral-300 px-4 text-base font-normal outline-none transition focus:border-red-700 focus:ring-4 focus:ring-red-100"
           />
         </label>
-        <label className="mt-5 grid gap-2 text-sm font-semibold text-neutral-800">
+        <label htmlFor="admin-password" className="mt-5 grid gap-2 text-sm font-semibold text-neutral-800">
           Password
           <input
+            id="admin-password"
             type="password"
             name="password"
             required

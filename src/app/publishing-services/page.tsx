@@ -38,7 +38,7 @@ const services = [
   },
   {
     title: "Print-ready preparation",
-    text: "We plan the manuscript and files for future physical book ordering, print coordination, and production requirements.",
+    text: "We plan the manuscript and files for physical book ordering, print coordination, and production requirements.",
   },
   {
     title: "Author/ministry publishing consultation",
@@ -61,7 +61,7 @@ const process = [
   },
   {
     title: "We publish and prepare for sales",
-    text: "We prepare the book for digital release, sales copy, payment readiness, and future print preparation where needed.",
+    text: "We prepare the book for digital release, sales copy, payment readiness, and print preparation where needed.",
   },
 ];
 

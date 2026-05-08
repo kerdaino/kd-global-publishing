@@ -116,7 +116,7 @@ export async function validateDownloadToken(
   const book = Array.isArray(order?.books) ? order.books[0] : order?.books;
 
   if (!order) {
-    return { ok: false, error: "This download link is not connected to an order." };
+    return { ok: false, error: "This download link cannot be verified." };
   }
 
   if (order.payment_status !== "paid") {

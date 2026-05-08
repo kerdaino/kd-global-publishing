@@ -25,7 +25,6 @@ export async function sendEmailSafely({ to, subject, html }: SendEmailInput) {
     const resend = getResendClient();
 
     if (!resend) {
-      console.log("Resend email skipped: RESEND_API_KEY or RESEND_FROM_EMAIL is not set.");
       return {
         ok: false,
         skipped: true,
@@ -55,7 +54,7 @@ export function getAdminNotifyEmail() {
   return (
     process.env.ADMIN_NOTIFY_EMAIL ||
     process.env.ADMIN_NOTIFICATION_EMAIL ||
-    "admin@example.com"
+    "kdevglobal@gmail.com"
   );
 }
 

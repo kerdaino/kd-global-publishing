@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BookCard } from "@/components/BookCard";
+import { Logo } from "@/components/Logo";
 import { authors } from "@/data/authors";
 import { getAuthorBySlugFromCatalog, getPublishedBooks } from "@/lib/catalog";
 import { createPageMetadata } from "@/lib/metadata";
@@ -42,8 +43,8 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
     <section className="bg-white px-6 py-16 sm:py-20">
       <div className="mx-auto max-w-6xl">
         <div className="grid gap-10 rounded-lg border border-neutral-200 bg-neutral-50 p-8 lg:grid-cols-[0.7fr_1.3fr] lg:items-center">
-          <div className="flex aspect-square items-center justify-center rounded-lg bg-neutral-950 text-5xl font-black text-white">
-            {author.name.slice(0, 2).toUpperCase()}
+          <div className="flex aspect-square items-center justify-center rounded-lg bg-neutral-950 text-white">
+            <Logo tone="dark" showText={false} className="[&>span:first-child]:size-24 [&>span:first-child]:text-4xl" />
           </div>
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-red-700">

@@ -44,7 +44,7 @@ function hasSupabaseServerEnv() {
 
 function formatPrice(amount: number, currency = "NGN") {
   if (!amount) {
-    return "Coming soon";
+    return "Price to be announced";
   }
 
   return new Intl.NumberFormat("en-NG", {
@@ -74,10 +74,10 @@ function mapBook(row: DbBook): Book {
     description: row.description || "",
     whatReadersWillLearn: parseList(row.what_readers_will_learn),
     format: row.format === "PDF eBook" ? "eBook PDF" : "eBook PDF",
-    status: row.status === "published" ? "Available" : "Coming Soon",
+    status: row.status === "published" ? "Available" : "Available Soon",
     isPhysicalAvailable: Boolean(row.is_physical_available),
     paymentLink: row.payment_link || "",
-    downloadFilePath: row.ebook_file_path || row.ebook_file_url || undefined,
+    downloadFilePath: row.ebook_file_path || undefined,
   };
 }
 
@@ -100,7 +100,7 @@ function mapAuthor(row: DbAuthor): Author {
     name: row.name,
     slug: row.slug,
     role: "Author",
-    bio: row.bio || "Author profile coming soon.",
+    bio: row.bio || "KD Global Publishing House author profile.",
     image: row.image_url || "",
   };
 }

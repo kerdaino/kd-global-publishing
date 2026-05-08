@@ -33,7 +33,7 @@ export default function TermsPage() {
             verification. Download links are for the purchasing customer only and
             may not be resold, publicly shared, or redistributed.
           </PolicyBlock>
-          <PolicyBlock title="Refunds">
+          <PolicyBlock id="refund-policy" title="Refund Policy">
             Because eBooks are digital products delivered after payment, completed
             purchases are generally non-refundable once the download link has
             been issued. If you paid in error, bought the wrong title, or cannot
@@ -60,14 +60,16 @@ export default function TermsPage() {
 }
 
 function PolicyBlock({
+  id,
   title,
   children,
 }: {
+  id?: string;
   title: string;
   children: ReactNode;
 }) {
   return (
-    <section>
+    <section id={id}>
       <h2 className="text-2xl font-black text-neutral-950">{title}</h2>
       <p className="mt-3">{children}</p>
     </section>

@@ -14,7 +14,11 @@ export function AdminTable({
   }
 
   return (
-    <div className="mt-8 overflow-x-auto rounded-lg border border-neutral-200 bg-white shadow-sm">
+    <div
+      className="mt-8 overflow-x-auto rounded-lg border border-neutral-200 bg-white shadow-sm"
+      tabIndex={0}
+      aria-label="Scrollable admin table"
+    >
       <table className="min-w-full divide-y divide-neutral-200 text-left text-sm">
         {children}
       </table>

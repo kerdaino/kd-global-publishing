@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { downloadPolicyText } from "@/lib/download-policy";
 
 type CheckoutState = "idle" | "loading" | "error";
@@ -14,6 +14,8 @@ export function BookCheckoutForm({
   disabled?: boolean;
   price: string;
 }) {
+  const formId = useId();
+  const errorId = `${formId}-error`;
   const [state, setState] = useState<CheckoutState>("idle");
   const [error, setError] = useState("");
 
@@ -22,7 +24,7 @@ export function BookCheckoutForm({
 
     if (!bookId) {
       setState("error");
-      setError("Payment is not available for this book yet.");
+      setError("Online checkout is unavailable for this title.");
       return;
     }
 
@@ -81,10 +83,10 @@ export function BookCheckoutForm({
         </p>
         <div className="mt-5 rounded-md border border-neutral-200 bg-neutral-100 p-4">
           <p className="text-sm font-bold text-neutral-700">
-          Payment link coming soon
+            Purchase unavailable
           </p>
           <p className="mt-2 text-sm leading-7 text-neutral-600">
-            This book is not connected to live Paystack checkout yet.
+            Online checkout is not open for this title yet.
           </p>
         </div>
       </div>
@@ -94,6 +96,7 @@ export function BookCheckoutForm({
   return (
     <form
       onSubmit={handleSubmit}
+      aria-describedby={error ? errorId : undefined}
       className="rounded-lg border border-neutral-200 bg-white p-6 shadow-xl shadow-neutral-950/5"
     >
       <p className="text-xs font-bold uppercase tracking-[0.18em] text-red-700">
@@ -112,26 +115,29 @@ export function BookCheckoutForm({
         payment, your secure download link will be sent to your email address.
       </p>
       <div className="mt-5 grid gap-4">
-        <label className="grid gap-2 text-sm font-semibold text-neutral-800">
+        <label htmlFor={`${formId}-name`} className="grid gap-2 text-sm font-semibold text-neutral-800">
           Full name
           <input
+            id={`${formId}-name`}
             name="name"
             required
             className="min-h-12 rounded-md border border-neutral-300 px-4 text-base font-normal outline-none transition focus:border-red-700 focus:ring-4 focus:ring-red-100"
           />
         </label>
-        <label className="grid gap-2 text-sm font-semibold text-neutral-800">
+        <label htmlFor={`${formId}-email`} className="grid gap-2 text-sm font-semibold text-neutral-800">
           Email address
           <input
+            id={`${formId}-email`}
             name="email"
             type="email"
             required
             className="min-h-12 rounded-md border border-neutral-300 px-4 text-base font-normal outline-none transition focus:border-red-700 focus:ring-4 focus:ring-red-100"
           />
         </label>
-        <label className="grid gap-2 text-sm font-semibold text-neutral-800">
+        <label htmlFor={`${formId}-phone`} className="grid gap-2 text-sm font-semibold text-neutral-800">
           WhatsApp / phone optional
           <input
+            id={`${formId}-phone`}
             name="phone"
             type="tel"
             className="min-h-12 rounded-md border border-neutral-300 px-4 text-base font-normal outline-none transition focus:border-red-700 focus:ring-4 focus:ring-red-100"
@@ -149,7 +155,7 @@ export function BookCheckoutForm({
         {downloadPolicyText()}
       </p>
       {error ? (
-        <p className="mt-4 rounded-md bg-red-50 p-4 text-sm font-semibold text-red-700">
+        <p id={errorId} role="alert" className="mt-4 rounded-md bg-red-50 p-4 text-sm font-semibold text-red-700">
           {error}
         </p>
       ) : null}

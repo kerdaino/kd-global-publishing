@@ -56,8 +56,8 @@ export function InquiryManagementTable<T extends InquiryBaseRow>({
               <AdminTd>
                 <form action={action} className="flex gap-2">
                   <input type="hidden" name="id" value={row.id} />
-                  <StatusSelect defaultValue={row.status || "new"} />
-                  <button className="rounded-md bg-red-700 px-3 py-2 text-xs font-bold text-white">
+                  <StatusSelect id={`inquiry-status-${row.id}`} defaultValue={row.status || "new"} />
+                  <button className="min-h-11 rounded-md bg-red-700 px-3 py-2 text-xs font-bold text-white">
                     Save
                   </button>
                 </form>
@@ -70,18 +70,24 @@ export function InquiryManagementTable<T extends InquiryBaseRow>({
   );
 }
 
-function StatusSelect({ defaultValue }: { defaultValue: string }) {
+function StatusSelect({ id, defaultValue }: { id: string; defaultValue: string }) {
   return (
-    <select
-      name="status"
-      defaultValue={defaultValue}
-      className="rounded-md border border-neutral-300 px-3 py-2"
-    >
-      <option value="new">New</option>
-      <option value="contacted">Contacted</option>
-      <option value="in_progress">In progress</option>
-      <option value="completed">Completed</option>
-      <option value="closed">Closed</option>
-    </select>
+    <>
+      <label htmlFor={id} className="sr-only">
+        Inquiry status
+      </label>
+      <select
+        id={id}
+        name="status"
+        defaultValue={defaultValue}
+        className="min-h-11 rounded-md border border-neutral-300 px-3 py-2"
+      >
+        <option value="new">New</option>
+        <option value="contacted">Contacted</option>
+        <option value="in_progress">In progress</option>
+        <option value="completed">Completed</option>
+        <option value="closed">Closed</option>
+      </select>
+    </>
   );
 }

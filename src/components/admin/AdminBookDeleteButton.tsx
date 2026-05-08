@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type DeleteState = "idle" | "loading" | "success" | "error";
 
@@ -19,18 +19,24 @@ export function AdminBookDeleteButton({
   const router = useRouter();
   const [state, setState] = useState<DeleteState>("idle");
   const [message, setMessage] = useState("");
+  const [isConfirming, setIsConfirming] = useState(false);
 
-  async function handleDelete() {
-    const confirmed = window.confirm(
-      hardDelete
-        ? `Permanently delete "${bookTitle}"? This cannot be undone.`
-        : `Archive "${bookTitle}"? It will be hidden from the public bookstore.`,
-    );
-
-    if (!confirmed) {
+  useEffect(() => {
+    if (!isConfirming) {
       return;
     }
 
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setIsConfirming(false);
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isConfirming]);
+
+  async function handleDelete() {
     setState("loading");
     setMessage("");
 
@@ -49,6 +55,7 @@ export function AdminBookDeleteButton({
       }
 
       setState("success");
+      setIsConfirming(false);
       setMessage(
         hardDelete
           ? "Book permanently deleted."
@@ -71,7 +78,7 @@ export function AdminBookDeleteButton({
       <button
         type="button"
         disabled={disabled || state === "loading"}
-        onClick={handleDelete}
+        onClick={() => setIsConfirming(true)}
         className={
           hardDelete
             ? "inline-flex min-h-11 w-fit items-center justify-center rounded-md bg-red-700 px-4 py-2 text-sm font-bold text-white transition hover:bg-red-800 disabled:cursor-not-allowed disabled:bg-neutral-300"
@@ -88,6 +95,7 @@ export function AdminBookDeleteButton({
       </button>
       {message ? (
         <p
+          role={state === "error" ? "alert" : "status"}
           className={
             state === "success"
               ? "rounded-md bg-neutral-950 p-3 text-sm font-semibold text-white"
@@ -96,6 +104,43 @@ export function AdminBookDeleteButton({
         >
           {message}
         </p>
+      ) : null}
+      {isConfirming ? (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={`delete-book-${bookId}-title`}
+          className="fixed inset-0 z-50 grid place-items-center bg-neutral-950/70 p-4"
+        >
+          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-2xl">
+            <h2 id={`delete-book-${bookId}-title`} className="text-2xl font-black text-neutral-950">
+              {hardDelete ? "Permanently delete book?" : "Archive book?"}
+            </h2>
+            <p className="mt-3 text-sm leading-7 text-neutral-650">
+              {hardDelete
+                ? `"${bookTitle}" will be permanently deleted. This cannot be undone.`
+                : `"${bookTitle}" will be archived and hidden from the public bookstore.`}
+            </p>
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              <button
+                type="button"
+                disabled={state === "loading"}
+                onClick={handleDelete}
+                className="inline-flex min-h-11 items-center justify-center rounded-md bg-red-700 px-4 py-2 text-sm font-bold text-white transition hover:bg-red-800 disabled:cursor-wait disabled:bg-neutral-300"
+              >
+                {state === "loading" ? "Working..." : hardDelete ? "Delete permanently" : "Archive book"}
+              </button>
+              <button
+                type="button"
+                disabled={state === "loading"}
+                onClick={() => setIsConfirming(false)}
+                className="inline-flex min-h-11 items-center justify-center rounded-md border border-neutral-300 px-4 py-2 text-sm font-bold text-neutral-950 transition hover:border-red-700 hover:text-red-700 disabled:cursor-wait disabled:text-neutral-400"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
       ) : null}
     </div>
   );

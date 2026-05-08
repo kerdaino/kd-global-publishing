@@ -60,8 +60,6 @@ export async function saveAdminBook(payload: BookPayload, id?: string) {
     throw new Error(result.error.message);
   }
 
-  console.log("Saved book cover_image_url:", bookData.cover_image_url);
-
   revalidateBookPaths();
 
   return result.data as { id: string };

@@ -54,7 +54,7 @@ export default async function BookPage({ params }: BookPageProps) {
           <aside className="lg:sticky lg:top-28">
             <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white p-4 shadow-xl">
               {coverImage ? (
-                <div className="aspect-[4/5] overflow-hidden rounded-md bg-neutral-100">
+                <div className="aspect-[5/8] overflow-hidden rounded-md bg-neutral-100">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={coverImage}
@@ -64,7 +64,7 @@ export default async function BookPage({ params }: BookPageProps) {
                 </div>
               ) : (
                 <>
-                  <div className="flex aspect-[4/5] items-center justify-center rounded-md bg-gradient-to-br from-neutral-950 via-red-950 to-red-700 p-8 text-center text-white">
+                  <div className="flex aspect-[5/8] items-center justify-center rounded-md bg-gradient-to-br from-neutral-950 via-red-950 to-red-700 p-8 text-center text-white">
                     <div>
                       <p className="text-sm font-semibold uppercase tracking-[0.22em] text-red-100">
                         KD Global
@@ -83,8 +83,7 @@ export default async function BookPage({ params }: BookPageProps) {
                     </div>
                   </div>
                   <div className="mt-4 rounded-md bg-neutral-50 p-4 text-sm leading-7 text-neutral-650">
-                    Cover image placeholder. Upload cover artwork in the admin
-                    book form to replace this preview.
+                    Cover artwork is being prepared for this title.
                   </div>
                 </>
               )}
@@ -135,6 +134,51 @@ export default async function BookPage({ params }: BookPageProps) {
               </p>
             </div>
 
+            <div className="mt-8 border-t border-neutral-200 pt-8">
+              <h2 className="text-2xl font-bold text-neutral-950">
+                Book preview
+              </h2>
+              <p className="mt-4 text-base leading-8 text-neutral-650">
+                Read the summary, learning points, and sample material before
+                purchase. Sample files appear here when available for a title.
+              </p>
+              {book.sampleFileUrl ? (
+                <Link
+                  href={book.sampleFileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-5 inline-flex min-h-12 items-center justify-center rounded-md border border-neutral-300 px-6 py-3 text-sm font-bold text-neutral-950 transition hover:border-red-700 hover:text-red-700"
+                >
+                  Open sample
+                </Link>
+              ) : (
+                <p className="mt-5 rounded-md bg-neutral-50 p-4 text-sm font-semibold text-neutral-650">
+                  A sample preview is not available for this title.
+                </p>
+              )}
+            </div>
+
+            <div className="mt-8 border-t border-neutral-200 pt-8">
+              <h2 className="text-2xl font-bold text-neutral-950">
+                What you will receive
+              </h2>
+              <ul className="mt-5 grid gap-3 sm:grid-cols-2">
+                {[
+                  "Secure eBook download",
+                  "PDF/EPUB format",
+                  "30-day download access",
+                  "5 download attempts",
+                ].map((item) => (
+                  <li
+                    key={item}
+                    className="rounded-md border border-neutral-200 bg-neutral-50 p-4 text-sm font-bold text-neutral-950"
+                  >
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
             <div className="mt-10 rounded-lg bg-neutral-950 p-6 text-white">
               <h2 className="text-2xl font-bold">What readers will learn</h2>
               <ul className="mt-6 grid gap-4">
@@ -182,8 +226,8 @@ export default async function BookPage({ params }: BookPageProps) {
                   Want a physical copy?
                 </h2>
                 <p className="mt-2 text-sm leading-7 text-neutral-650">
-                  This title can be prepared for physical ordering and print
-                  coordination.
+                  This title is eligible for physical ordering and print
+                  coordination support.
                 </p>
                 <Link
                   href="/print-request"

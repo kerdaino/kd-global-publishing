@@ -1,39 +1,52 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Logo } from "@/components/Logo";
 import { site } from "@/lib/site";
 
-const mobileNavLinks = [...site.navLinks, { label: "Admin", href: "/admin" }];
+const mobileNavLinks = site.navLinks;
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
 
   function closeMenu() {
     setIsOpen(false);
   }
 
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        closeMenu();
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen]);
+
   return (
     <header className="sticky top-0 z-50 border-b border-neutral-200 bg-white/95 shadow-sm shadow-neutral-950/5 backdrop-blur">
       <nav className="mx-auto max-w-6xl px-4 sm:px-6" aria-label="Main navigation">
         <div className="flex min-h-20 items-center justify-between gap-4">
-          <Link href="/" onClick={closeMenu} className="flex min-w-0 items-center gap-3">
-            <span className="flex size-11 shrink-0 items-center justify-center rounded-md bg-red-700 text-base font-black text-white">
-              KD
-            </span>
-            <span className="min-w-0">
-              <span className="block truncate text-base font-black tracking-tight text-neutral-950">
-                KD Global
-              </span>
-              <span className="block truncate text-sm font-medium text-neutral-500">
-                Publishing House
-              </span>
-            </span>
+          <Link href="/" onClick={closeMenu} className="rounded-md" aria-label={site.name}>
+            <Logo />
           </Link>
 
           <div className="hidden items-center justify-end gap-1 text-sm font-semibold text-neutral-700 lg:flex">
             {site.navLinks.map((link) => (
-              <NavLink key={link.href} href={link.href} label={link.label} />
+              <NavLink
+                key={link.href}
+                href={link.href}
+                label={link.label}
+                active={isActiveRoute(pathname, link.href)}
+              />
             ))}
           </div>
 
@@ -74,18 +87,24 @@ export function Navbar() {
 
         <div
           id="mobile-navigation"
+          role="region"
+          aria-label="Mobile navigation"
           className={
             isOpen
               ? "grid border-t border-neutral-200 py-4 lg:hidden"
               : "hidden"
           }
         >
+          <Link href="/" onClick={closeMenu} className="mb-4 rounded-md" aria-label={site.name}>
+            <Logo />
+          </Link>
           <div className="grid gap-2 text-sm font-semibold text-neutral-800">
             {mobileNavLinks.map((link) => (
               <MobileNavLink
                 key={link.href}
                 href={link.href}
                 label={link.label}
+                active={isActiveRoute(pathname, link.href)}
                 onClick={closeMenu}
               />
             ))}
@@ -96,14 +115,29 @@ export function Navbar() {
   );
 }
 
-function NavLink({ href, label }: { href: string; label: string }) {
+function NavLink({
+  href,
+  label,
+  active,
+}: {
+  href: string;
+  label: string;
+  active: boolean;
+}) {
+  const isContact = href === "/contact";
+
   return (
     <Link
       href={href}
+      aria-current={active ? "page" : undefined}
       className={
-        href === "/contact"
-          ? "whitespace-nowrap rounded-md bg-red-700 px-4 py-2 text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-red-800 hover:shadow-md"
-          : "whitespace-nowrap rounded-md px-3 py-2 transition hover:bg-neutral-100 hover:text-red-700"
+        isContact
+          ? active
+            ? "whitespace-nowrap rounded-md bg-red-800 px-4 py-2 text-white shadow-sm ring-2 ring-red-200 transition duration-200 hover:-translate-y-0.5 hover:bg-red-900 hover:shadow-md"
+            : "whitespace-nowrap rounded-md bg-red-700 px-4 py-2 text-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-red-800 hover:shadow-md"
+          : active
+            ? "whitespace-nowrap border-b-2 border-red-700 px-3 py-2 text-red-700 transition duration-200 hover:bg-red-50"
+            : "whitespace-nowrap rounded-md border-b-2 border-transparent px-3 py-2 transition duration-200 hover:-translate-y-0.5 hover:bg-neutral-100 hover:text-red-700"
       }
     >
       {label}
@@ -114,23 +148,44 @@ function NavLink({ href, label }: { href: string; label: string }) {
 function MobileNavLink({
   href,
   label,
+  active,
   onClick,
 }: {
   href: string;
   label: string;
+  active: boolean;
   onClick: () => void;
 }) {
+  const isContact = href === "/contact";
+
   return (
     <Link
       href={href}
       onClick={onClick}
+      aria-current={active ? "page" : undefined}
       className={
-        href === "/contact"
-          ? "flex min-h-12 items-center rounded-md bg-red-700 px-4 text-white transition hover:bg-red-800"
-          : "flex min-h-12 items-center rounded-md px-4 transition hover:bg-neutral-100 hover:text-red-700"
+        isContact
+          ? active
+            ? "flex min-h-12 items-center rounded-md bg-red-800 px-4 text-white shadow-sm transition duration-200 hover:bg-red-900"
+            : "flex min-h-12 items-center rounded-md bg-red-700 px-4 text-white transition duration-200 hover:bg-red-800"
+          : active
+            ? "flex min-h-12 items-center rounded-md border-l-4 border-red-700 bg-red-50 px-4 text-red-700 transition duration-200"
+            : "flex min-h-12 items-center rounded-md border-l-4 border-transparent px-4 transition duration-200 hover:border-red-200 hover:bg-neutral-100 hover:text-red-700"
       }
     >
       {label}
     </Link>
   );
+}
+
+function isActiveRoute(pathname: string, href: string) {
+  if (href === "/") {
+    return pathname === "/";
+  }
+
+  if (href === "/bookstore" && pathname.startsWith("/books/")) {
+    return true;
+  }
+
+  return pathname === href || pathname.startsWith(`${href}/`);
 }

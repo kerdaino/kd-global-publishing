@@ -45,12 +45,7 @@ export async function POST(request: Request) {
     });
 
     if (!result.ok) {
-      return jsonError(
-        result.skipped
-          ? "Email notifications are not configured yet."
-          : "Unable to send this inquiry right now.",
-        500,
-      );
+      return jsonError("Unable to send this inquiry right now.", 500);
     }
 
     return jsonOk({ receivedAt: new Date().toISOString() });

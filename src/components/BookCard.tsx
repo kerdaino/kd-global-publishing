@@ -7,14 +7,14 @@ type BookCardProps = {
 
 export function BookCard({ book }: BookCardProps) {
   const isAvailable = book.status === "Available";
-  const actionLabel = isAvailable ? "View Book" : "Coming Soon";
+  const actionLabel = isAvailable ? "View Book" : "Preview Book";
   const coverImage = book.coverImage?.trim();
 
   return (
     <article className="group grid h-full overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:border-red-200 hover:shadow-xl">
       <Link href={`/books/${book.slug}`} className="block">
         {coverImage ? (
-          <div className="aspect-[4/5] overflow-hidden bg-neutral-100">
+          <div className="aspect-[5/8] overflow-hidden bg-neutral-100">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={coverImage}
@@ -23,7 +23,7 @@ export function BookCard({ book }: BookCardProps) {
             />
           </div>
         ) : (
-          <div className="flex aspect-[4/5] items-center justify-center bg-gradient-to-br from-neutral-950 via-red-950 to-red-700 p-8 text-center text-white">
+          <div className="flex aspect-[5/8] items-center justify-center bg-gradient-to-br from-neutral-950 via-red-950 to-red-700 p-8 text-center text-white">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.22em] text-red-100">
                 KD Global
@@ -74,8 +74,8 @@ export function BookCard({ book }: BookCardProps) {
             href={`/books/${book.slug}`}
             className={
               isAvailable
-                ? "rounded-md bg-neutral-950 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-red-700"
-                : "rounded-md bg-neutral-100 px-4 py-2 text-sm font-semibold text-neutral-600 transition hover:bg-neutral-200"
+                ? "inline-flex min-h-11 items-center justify-center rounded-md bg-neutral-950 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-red-700"
+                : "inline-flex min-h-11 items-center justify-center rounded-md bg-neutral-100 px-4 py-2 text-sm font-semibold text-neutral-600 transition hover:bg-neutral-200"
             }
           >
             {actionLabel}

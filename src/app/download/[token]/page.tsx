@@ -65,6 +65,10 @@ export default async function DownloadPage({
         <p className="mt-4 text-base leading-8 text-neutral-650">
           {downloadPolicyText()}
         </p>
+        <p className="mt-4 rounded-md bg-neutral-50 p-4 text-sm leading-7 text-neutral-650">
+          Need help with your download? Contact support and include the customer
+          email shown below.
+        </p>
         <div className="mt-6 grid gap-4 rounded-lg bg-neutral-50 p-5 text-sm leading-7 text-neutral-650 sm:grid-cols-2">
           <div>
             <p className="font-bold text-neutral-950">Customer email</p>
@@ -89,7 +93,7 @@ export default async function DownloadPage({
           </div>
         </div>
         {actionError ? (
-          <p className="mt-5 rounded-md bg-red-50 p-4 text-sm font-semibold text-red-700">
+          <p role="alert" className="mt-5 rounded-md bg-red-50 p-4 text-sm font-semibold text-red-700">
             {actionError}
           </p>
         ) : null}
@@ -116,7 +120,7 @@ function DownloadError({ message }: { message: string }) {
         <h1 className="mt-4 text-4xl font-black text-neutral-950">
           This eBook link cannot be used.
         </h1>
-        <p className="mt-5 text-base leading-8 text-neutral-650">{message}</p>
+        <p role="alert" className="mt-5 text-base leading-8 text-neutral-650">{message}</p>
         <Link
           href="/contact"
           className="mt-8 inline-flex min-h-12 items-center justify-center rounded-md bg-red-700 px-6 py-3 text-sm font-bold text-white transition hover:bg-red-800"

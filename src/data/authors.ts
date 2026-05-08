@@ -2,10 +2,10 @@ import type { Author } from "@/types";
 
 export const authors: Author[] = [
   {
-    name: "To be updated",
+    name: "KD Global Author",
     slug: "to-be-updated",
     role: "Featured Author",
-    bio: "The first KD Global Publishing House author profile will be updated as Mum’s first book moves toward launch. This profile is prepared for the author page, bookstore, and future book catalog.",
+    bio: "KD Global Publishing House features Christian authors, ministers, and ministry voices whose books serve readers with truth-filled teaching.",
     image: "/authors/to-be-updated.jpg",
   },
   {
