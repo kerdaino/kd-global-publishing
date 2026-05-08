@@ -78,6 +78,8 @@ mums-first-book.pdf
 
 The download page validates the token and creates a short-lived signed URL from the private `ebook-files` bucket. `ebook_file_url` remains available as a fallback for manually hosted public files.
 
+Secure download tokens expire after 30 days and allow 5 downloads. These values are configured in `src/lib/download-policy.ts` with `DOWNLOAD_TOKEN_EXPIRY_DAYS` and `DOWNLOAD_TOKEN_MAX_DOWNLOADS`.
+
 ## Payments
 
 Paystack flow:
@@ -85,14 +87,19 @@ Paystack flow:
 1. Buyer submits name, email, and optional phone from a book page.
 2. `/api/paystack/initialize` creates a pending order and initializes Paystack.
 3. Paystack redirects to `/checkout/success?reference=...`.
-4. `/api/paystack/verify` verifies payment, marks the order paid, creates a download token, and sends emails.
+4. `/api/paystack/verify` verifies payment, marks the order paid, creates a download token, and sends emails when Resend is configured.
 5. `/api/paystack/webhook` also handles `charge.success` safely for duplicate-tolerant fulfillment.
 
 Amount is stored in naira in Supabase and sent to Paystack in kobo.
 
 ## Email
 
-Resend sends:
+Resend is optional until a sending domain is verified. If `RESEND_API_KEY` or
+`RESEND_FROM_EMAIL` is missing, payment verification still marks the order paid,
+creates the secure download token, and shows the download link on the checkout
+success page. Email failures are logged and do not fail checkout.
+
+When configured, Resend sends:
 
 - customer eBook download confirmation
 - admin order notification
@@ -100,7 +107,7 @@ Resend sends:
 - admin sermon-to-book notification
 - admin print request notification
 
-Email failures are handled safely and should not break successful payment verification.
+Admin notification emails are only attempted when Resend is configured.
 
 ## Admin Dashboard
 
@@ -155,7 +162,7 @@ https://your-domain.com/checkout/success
 https://your-domain.com/api/paystack/webhook
 ```
 
-7. Configure Resend sender/domain verification before using a branded `RESEND_FROM_EMAIL`.
+7. Optional: configure Resend sender/domain verification before setting `RESEND_API_KEY` and `RESEND_FROM_EMAIL`.
 
 ## Important Environment Variables
 
@@ -167,8 +174,8 @@ https://your-domain.com/api/paystack/webhook
 | `SUPABASE_SERVICE_ROLE_KEY` | Server-only Supabase key for admin operations, payments, and downloads |
 | `PAYSTACK_SECRET_KEY` | Server-only Paystack secret key |
 | `NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY` | Browser-safe Paystack public key for future client-side features |
-| `RESEND_API_KEY` | Server-only Resend API key |
+| `RESEND_API_KEY` | Optional server-only Resend API key |
 | `ADMIN_NOTIFY_EMAIL` | Email address that receives admin notifications |
-| `RESEND_FROM_EMAIL` | Verified Resend sender address |
+| `RESEND_FROM_EMAIL` | Optional verified Resend sender address |
 
 Never expose `SUPABASE_SERVICE_ROLE_KEY`, `PAYSTACK_SECRET_KEY`, or `RESEND_API_KEY` to the browser.

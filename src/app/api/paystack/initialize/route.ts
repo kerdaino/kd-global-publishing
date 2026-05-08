@@ -4,7 +4,7 @@ import {
   initializePaystackTransaction,
   nairaToKobo,
 } from "@/lib/paystack";
-import { jsonError, jsonOk } from "@/lib/utils";
+import { getBaseUrl, jsonError, jsonOk } from "@/lib/utils";
 
 type InitializePayload = {
   bookId?: string;
@@ -48,6 +48,10 @@ export async function POST(request: Request) {
     }
 
     const reference = createPaymentReference();
+    const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || getBaseUrl()).replace(/\/$/, "");
+    const callbackUrl = `${siteUrl}/checkout/success`;
+    console.log("Paystack callback_url:", callbackUrl);
+
     const { data: order, error: orderError } = await supabase
       .from("orders")
       .insert({
@@ -72,6 +76,7 @@ export async function POST(request: Request) {
       amount: nairaToKobo(amount),
       email,
       reference,
+      callbackUrl,
       metadata: {
         orderId: order.id,
         bookId: book.id,
@@ -89,9 +94,23 @@ export async function POST(request: Request) {
       return jsonError(paystack.message || "Unable to initialize Paystack payment.");
     }
 
+    const paystackReference = paystack.data.reference || reference;
+
+    if (paystackReference !== reference) {
+      const { error: referenceError } = await supabase
+        .from("orders")
+        .update({ paystack_reference: paystackReference })
+        .eq("id", order.id);
+
+      if (referenceError) {
+        return jsonError("Unable to store Paystack payment reference.");
+      }
+    }
+
     return jsonOk({
       authorizationUrl: paystack.data.authorization_url,
-      reference: paystack.data.reference,
+      authorization_url: paystack.data.authorization_url,
+      reference: paystackReference,
       orderId: order.id,
     });
   } catch (error) {

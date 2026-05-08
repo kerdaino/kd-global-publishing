@@ -6,6 +6,7 @@ import {
   incrementDownloadCount,
   validateDownloadToken,
 } from "@/lib/downloads";
+import { downloadPolicyText } from "@/lib/download-policy";
 
 export const metadata: Metadata = {
   title: "Secure Download",
@@ -61,6 +62,9 @@ export default async function DownloadPage({
         <h1 className="mt-4 text-4xl font-black text-neutral-950">
           {result.data.bookTitle}
         </h1>
+        <p className="mt-4 text-base leading-8 text-neutral-650">
+          {downloadPolicyText()}
+        </p>
         <div className="mt-6 grid gap-4 rounded-lg bg-neutral-50 p-5 text-sm leading-7 text-neutral-650 sm:grid-cols-2">
           <div>
             <p className="font-bold text-neutral-950">Customer email</p>

@@ -1,8 +1,9 @@
 import crypto from "node:crypto";
+import {
+  DOWNLOAD_TOKEN_EXPIRY_DAYS,
+  DOWNLOAD_TOKEN_MAX_DOWNLOADS,
+} from "@/lib/download-policy";
 import { createAdminClient } from "@/lib/supabase/server";
-
-const DEFAULT_EXPIRY_DAYS = 7;
-const DEFAULT_MAX_DOWNLOADS = 3;
 
 type DownloadTokenRecord = {
   id: string;
@@ -62,8 +63,8 @@ export async function createDownloadTokenForOrder(
     return existingToken as { token: string };
   }
 
-  const expiryDays = options?.expiryDays ?? DEFAULT_EXPIRY_DAYS;
-  const maxDownloads = options?.maxDownloads ?? DEFAULT_MAX_DOWNLOADS;
+  const expiryDays = options?.expiryDays ?? DOWNLOAD_TOKEN_EXPIRY_DAYS;
+  const maxDownloads = options?.maxDownloads ?? DOWNLOAD_TOKEN_MAX_DOWNLOADS;
   const expiresAt = new Date(
     Date.now() + 1000 * 60 * 60 * 24 * expiryDays,
   ).toISOString();
@@ -127,7 +128,7 @@ export async function validateDownloadToken(
   }
 
   const downloadCount = record.download_count ?? 0;
-  const maxDownloads = record.max_downloads ?? DEFAULT_MAX_DOWNLOADS;
+  const maxDownloads = record.max_downloads ?? DOWNLOAD_TOKEN_MAX_DOWNLOADS;
 
   if (downloadCount >= maxDownloads) {
     return {

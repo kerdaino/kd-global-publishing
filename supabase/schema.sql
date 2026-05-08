@@ -41,6 +41,9 @@ create table if not exists public.books (
   ebook_file_url text,
   ebook_file_path text,
   sample_file_url text,
+  sample_file_path text,
+  payment_link text,
+  what_readers_will_learn text[],
   format text default 'PDF eBook',
   status text default 'draft',
   is_featured boolean default false,
@@ -51,6 +54,23 @@ create table if not exists public.books (
 
 alter table public.books
 add column if not exists ebook_file_path text;
+
+alter table public.books
+add column if not exists sample_file_path text;
+
+alter table public.books
+add column if not exists payment_link text;
+
+alter table public.books
+add column if not exists what_readers_will_learn text[];
+
+alter table public.books
+alter column what_readers_will_learn type text[]
+using case
+  when what_readers_will_learn is null then null
+  when pg_typeof(what_readers_will_learn)::text = 'text[]' then what_readers_will_learn::text[]
+  else array_remove(regexp_split_to_array(what_readers_will_learn::text, E'\\r?\\n'), '')
+end;
 
 create table if not exists public.orders (
   id uuid primary key default gen_random_uuid(),
@@ -73,7 +93,7 @@ create table if not exists public.download_tokens (
   token text unique not null,
   expires_at timestamp with time zone,
   download_count integer default 0,
-  max_downloads integer default 3,
+  max_downloads integer default 5,
   created_at timestamp with time zone default now()
 );
 
@@ -128,6 +148,7 @@ create table if not exists public.admin_users (
 create index if not exists authors_slug_idx on public.authors(slug);
 create index if not exists books_slug_idx on public.books(slug);
 create index if not exists books_ebook_file_path_idx on public.books(ebook_file_path);
+create index if not exists books_sample_file_path_idx on public.books(sample_file_path);
 create index if not exists orders_paystack_reference_idx on public.orders(paystack_reference);
 create index if not exists orders_customer_email_idx on public.orders(customer_email);
 create index if not exists publishing_inquiries_status_idx on public.publishing_inquiries(status);
@@ -252,15 +273,16 @@ execute function public.set_updated_at();
 -- Supabase Storage buckets for book assets.
 -- Covers and sample files are public. Full eBook files stay private and are
 -- served through short-lived signed URLs from the secure download route.
-insert into storage.buckets (id, name, public)
+insert into storage.buckets (id, name, public, allowed_mime_types)
 values
-  ('book-covers', 'book-covers', true),
-  ('sample-files', 'sample-files', true),
-  ('ebook-files', 'ebook-files', false)
+  ('book-covers', 'book-covers', true, array['image/jpeg', 'image/png', 'image/webp']),
+  ('sample-files', 'sample-files', true, array['application/pdf']),
+  ('ebook-files', 'ebook-files', false, array['application/pdf', 'application/epub+zip'])
 on conflict (id) do update
 set
   public = excluded.public,
-  name = excluded.name;
+  name = excluded.name,
+  allowed_mime_types = excluded.allowed_mime_types;
 
 drop policy if exists "Public can read book covers" on storage.objects;
 create policy "Public can read book covers"

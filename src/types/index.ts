@@ -14,6 +14,7 @@ export type Book = {
   priceInKobo: number;
   coverImage: string;
   sampleFileUrl?: string;
+  sampleFilePath?: string;
   shortDescription: string;
   description: string;
   whatReadersWillLearn: string[];

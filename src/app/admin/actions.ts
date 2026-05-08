@@ -13,8 +13,15 @@ function nullableText(formData: FormData, key: string) {
   return text(formData, key) || null;
 }
 
-function nullableStoragePath(formData: FormData, key: string) {
-  return text(formData, key).replace(/^ebook-files\//, "").replace(/^\/+/, "") || null;
+function textArray(formData: FormData, key: string) {
+  return text(formData, key)
+    .split(/\r?\n/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function nullableStoragePath(formData: FormData, key: string, bucket = "ebook-files") {
+  return text(formData, key).replace(new RegExp(`^${bucket}/`), "").replace(/^\/+/, "") || null;
 }
 
 function money(formData: FormData, key: string) {
@@ -73,6 +80,9 @@ export async function createBook(formData: FormData) {
     ebook_file_url: nullableText(formData, "ebook_file_url"),
     ebook_file_path: nullableStoragePath(formData, "ebook_file_path"),
     sample_file_url: nullableText(formData, "sample_file_url"),
+    sample_file_path: nullableStoragePath(formData, "sample_file_path", "sample-files"),
+    payment_link: nullableText(formData, "payment_link"),
+    what_readers_will_learn: textArray(formData, "what_readers_will_learn"),
     format: text(formData, "format") || "PDF eBook",
     status: text(formData, "status") || "draft",
     is_featured: formData.get("is_featured") === "on",
@@ -108,6 +118,9 @@ export async function updateBook(formData: FormData) {
       ebook_file_url: nullableText(formData, "ebook_file_url"),
       ebook_file_path: nullableStoragePath(formData, "ebook_file_path"),
       sample_file_url: nullableText(formData, "sample_file_url"),
+      sample_file_path: nullableStoragePath(formData, "sample_file_path", "sample-files"),
+      payment_link: nullableText(formData, "payment_link"),
+      what_readers_will_learn: textArray(formData, "what_readers_will_learn"),
       format: text(formData, "format") || "PDF eBook",
       status: text(formData, "status") || "draft",
       is_featured: formData.get("is_featured") === "on",

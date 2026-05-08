@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { downloadPolicyText } from "@/lib/download-policy";
 
 type VerifyState = {
   status: "loading" | "success" | "error";
@@ -11,10 +12,17 @@ type VerifyState = {
     customerEmail: string;
     downloadUrl: string;
     reference: string;
+    emailSent?: boolean;
   };
 };
 
-export function CheckoutVerifier({ reference }: { reference?: string }) {
+export function CheckoutVerifier({
+  reference,
+  debugSearchParams,
+}: {
+  reference?: string;
+  debugSearchParams?: Record<string, string | string[] | undefined>;
+}) {
   const [state, setState] = useState<VerifyState>({
     status: "loading",
     message: "Verifying your payment...",
@@ -25,7 +33,7 @@ export function CheckoutVerifier({ reference }: { reference?: string }) {
       if (!reference) {
         setState({
           status: "error",
-          message: "No payment reference was found.",
+          message: "Transaction reference not found.",
         });
         return;
       }
@@ -46,7 +54,9 @@ export function CheckoutVerifier({ reference }: { reference?: string }) {
 
         setState({
           status: "success",
-          message: "Payment confirmed. Your download email has been prepared.",
+          message: result.data?.emailSent
+            ? "Payment confirmed. Your download email has been prepared."
+            : "Payment confirmed. You can download your book from this page.",
           details: result.data,
         });
       } catch {
@@ -94,9 +104,28 @@ export function CheckoutVerifier({ reference }: { reference?: string }) {
             href={state.details.downloadUrl}
             className="mt-4 inline-flex rounded-md bg-red-700 px-5 py-3 text-sm font-bold text-white transition hover:bg-red-800"
           >
-            Open Download Page
+            Download your book
           </Link>
+          {!state.details.emailSent ? (
+            <p className="mt-4 text-sm leading-7 text-neutral-650">
+              Email delivery is not configured yet, so keep this page or open
+              the download link now.
+            </p>
+          ) : null}
+          {process.env.NODE_ENV === "development" ? (
+            <p className="mt-4 break-all rounded-md bg-white p-3 text-xs leading-6 text-neutral-600">
+              {state.details.downloadUrl}
+            </p>
+          ) : null}
+          <p className="mt-4 text-sm leading-7 text-neutral-650">
+            {downloadPolicyText()}
+          </p>
         </div>
+      ) : null}
+      {!reference && process.env.NODE_ENV === "development" ? (
+        <pre className="mt-6 overflow-auto rounded-md bg-neutral-950 p-4 text-left text-xs leading-6 text-white">
+          {JSON.stringify(debugSearchParams || {}, null, 2)}
+        </pre>
       ) : null}
       <Link
         href="/bookstore"

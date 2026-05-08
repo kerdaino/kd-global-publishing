@@ -9,11 +9,15 @@ type SendEmailInput = {
 export function getResendClient() {
   const apiKey = process.env.RESEND_API_KEY;
 
-  if (!apiKey) {
+  if (!apiKey || !process.env.RESEND_FROM_EMAIL) {
     return null;
   }
 
   return new Resend(apiKey);
+}
+
+export function isResendConfigured() {
+  return Boolean(process.env.RESEND_API_KEY && process.env.RESEND_FROM_EMAIL);
 }
 
 export async function sendEmailSafely({ to, subject, html }: SendEmailInput) {
@@ -21,13 +25,16 @@ export async function sendEmailSafely({ to, subject, html }: SendEmailInput) {
     const resend = getResendClient();
 
     if (!resend) {
-      return { ok: false, skipped: true, error: "RESEND_API_KEY is not set." };
+      console.log("Resend email skipped: RESEND_API_KEY or RESEND_FROM_EMAIL is not set.");
+      return {
+        ok: false,
+        skipped: true,
+        error: "RESEND_API_KEY or RESEND_FROM_EMAIL is not set.",
+      };
     }
 
     const result = await resend.emails.send({
-      from:
-        process.env.RESEND_FROM_EMAIL ||
-        "KD Global Publishing House <onboarding@resend.dev>",
+      from: process.env.RESEND_FROM_EMAIL as string,
       to,
       subject,
       html,

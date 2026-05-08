@@ -43,6 +43,9 @@ export async function saveAdminBook(payload: BookPayload, id?: string) {
     ebook_file_url: text(payload.ebook_file_url) || null,
     ebook_file_path: normalizeStoragePath(text(payload.ebook_file_path)) || null,
     sample_file_url: text(payload.sample_file_url) || null,
+    sample_file_path: normalizeStoragePath(text(payload.sample_file_path), "sample-files") || null,
+    payment_link: text(payload.payment_link) || null,
+    what_readers_will_learn: lines(payload.what_readers_will_learn),
     format: text(payload.format) || "PDF eBook",
     status: text(payload.status) || "draft",
     is_featured: booleanValue(payload.is_featured),
@@ -57,10 +60,59 @@ export async function saveAdminBook(payload: BookPayload, id?: string) {
     throw new Error(result.error.message);
   }
 
-  revalidatePath("/admin/books");
-  revalidatePath("/bookstore");
+  console.log("Saved book cover_image_url:", bookData.cover_image_url);
+
+  revalidateBookPaths();
 
   return result.data as { id: string };
+}
+
+export async function archiveAdminBook(id: string) {
+  await requireAdmin();
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("books")
+    .update({ status: "archived" })
+    .eq("id", id)
+    .select("id")
+    .single();
+
+  if (error || !data) {
+    throw new Error(error?.message || "Unable to archive book.");
+  }
+
+  revalidateBookPaths();
+
+  return data as { id: string };
+}
+
+export async function hardDeleteAdminBook(id: string) {
+  await requireAdmin();
+  const supabase = createAdminClient();
+  const { data: paidOrders, error: paidOrdersError } = await supabase
+    .from("orders")
+    .select("id")
+    .eq("book_id", id)
+    .eq("payment_status", "paid")
+    .limit(1);
+
+  if (paidOrdersError) {
+    throw new Error("Unable to check paid orders before deleting this book.");
+  }
+
+  if (paidOrders?.length) {
+    throw new Error("This book has paid orders. Archive it instead of permanently deleting it.");
+  }
+
+  const { error } = await supabase.from("books").delete().eq("id", id);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  revalidateBookPaths();
+
+  return { id };
 }
 
 function validateBookPayload(payload: BookPayload) {
@@ -77,8 +129,24 @@ function validateBookPayload(payload: BookPayload) {
   }
 }
 
+function revalidateBookPaths() {
+  revalidatePath("/admin/books");
+  revalidatePath("/bookstore");
+}
+
 function text(input: unknown) {
   return typeof input === "string" ? input.trim() : "";
+}
+
+function lines(input: unknown) {
+  if (Array.isArray(input)) {
+    return input.map((item) => text(item)).filter(Boolean);
+  }
+
+  return text(input)
+    .split(/\r?\n/)
+    .map((item) => item.trim())
+    .filter(Boolean);
 }
 
 function booleanValue(input: unknown) {
@@ -93,10 +161,10 @@ function slugify(value: string) {
     .replace(/^-+|-+$/g, "");
 }
 
-function normalizeStoragePath(value: string) {
+function normalizeStoragePath(value: string, bucket = "ebook-files") {
   if (!value) {
     return "";
   }
 
-  return value.replace(/^ebook-files\//, "").replace(/^\/+/, "");
+  return value.replace(new RegExp(`^${bucket}/`), "").replace(/^\/+/, "");
 }

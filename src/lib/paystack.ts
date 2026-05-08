@@ -4,7 +4,11 @@ import {
   adminOrderNotificationEmail,
   orderConfirmationEmail,
 } from "@/lib/emails";
-import { sendAdminEmail, sendCustomerEmail } from "@/lib/resend";
+import {
+  isResendConfigured,
+  sendAdminEmail,
+  sendCustomerEmail,
+} from "@/lib/resend";
 import { createAdminClient } from "@/lib/supabase/server";
 import { getBaseUrl, requiredEnv } from "@/lib/utils";
 
@@ -78,13 +82,18 @@ export async function initializePaystackTransaction({
   amount,
   email,
   reference,
+  callbackUrl,
   metadata,
 }: {
   amount: number;
   email: string;
   reference: string;
+  callbackUrl?: string;
   metadata: Record<string, string>;
 }) {
+  const callback_url =
+    callbackUrl || `${getBaseUrl()}/checkout/success`;
+
   const response = await fetch("https://api.paystack.co/transaction/initialize", {
     method: "POST",
     headers: {
@@ -95,7 +104,7 @@ export async function initializePaystackTransaction({
       amount,
       email,
       currency: "NGN",
-      callback_url: `${getBaseUrl()}/checkout/success?reference=${reference}`,
+      callback_url,
       reference,
       metadata,
     }),
@@ -114,7 +123,14 @@ export async function verifyPaystackTransaction(reference: string) {
     },
   );
 
-  return (await response.json()) as PaystackVerifyResponse;
+  const result = (await response.json()) as PaystackVerifyResponse;
+  console.log("Paystack verify response status:", {
+    status: result.status,
+    transactionStatus: result.data?.status,
+    reference: result.data?.reference || reference,
+  });
+
+  return result;
 }
 
 export function verifyPaystackWebhookSignature(body: string, signature: string) {
@@ -172,8 +188,9 @@ export async function fulfillPaidOrder({
 
   const downloadUrl = `${getBaseUrl()}/download/${downloadToken.token}`;
   const shouldSendEmail = typedOrder.delivery_status !== "download_sent";
+  let emailSent = false;
 
-  if (shouldSendEmail) {
+  if (shouldSendEmail && isResendConfigured()) {
     const customerEmail = orderConfirmationEmail({
       customerName: typedOrder.customer_name,
       bookTitle: typedOrder.books?.title || "your book",
@@ -188,16 +205,31 @@ export async function fulfillPaidOrder({
       paystackReference: typedOrder.paystack_reference,
     });
 
-    await sendCustomerEmail({
+    const customerEmailResult = await sendCustomerEmail({
       to: typedOrder.customer_email,
       ...customerEmail,
     });
-    await sendAdminEmail(adminEmail);
 
-    await supabase
-      .from("orders")
-      .update({ delivery_status: "download_sent" })
-      .eq("id", typedOrder.id);
+    const adminEmailResult = await sendAdminEmail(adminEmail);
+
+    if (!customerEmailResult.ok) {
+      console.error("Customer order email was not sent", customerEmailResult.error);
+    }
+
+    if (!adminEmailResult.ok) {
+      console.error("Admin order email was not sent", adminEmailResult.error);
+    }
+
+    emailSent = Boolean(customerEmailResult.ok);
+
+    if (emailSent) {
+      await supabase
+        .from("orders")
+        .update({ delivery_status: "download_sent" })
+        .eq("id", typedOrder.id);
+    }
+  } else if (shouldSendEmail) {
+    console.log("Order emails skipped because Resend is not configured.");
   }
 
   return {
@@ -209,6 +241,6 @@ export async function fulfillPaidOrder({
     amount: typedOrder.amount,
     currency: typedOrder.currency || "NGN",
     downloadUrl,
-    emailSent: shouldSendEmail,
+    emailSent,
   };
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { downloadPolicyText } from "@/lib/download-policy";
 
 type CheckoutState = "idle" | "loading" | "error";
 
@@ -53,13 +54,16 @@ export function BookCheckoutForm({
 
       const result = await response.json();
 
-      if (!result.ok || !result.data?.authorizationUrl) {
+      const authorizationUrl =
+        result.data?.authorization_url || result.data?.authorizationUrl;
+
+      if (!result.ok || !authorizationUrl) {
         setState("error");
         setError(result.error || "Unable to start checkout.");
         return;
       }
 
-      window.location.href = result.data.authorizationUrl;
+      window.location.href = authorizationUrl;
     } catch {
       setState("error");
       setError("Unable to connect to checkout. Please try again.");
@@ -142,7 +146,7 @@ export function BookCheckoutForm({
         {state === "loading" ? "Redirecting..." : "Buy Now"}
       </button>
       <p className="mt-4 rounded-md bg-neutral-50 p-4 text-sm leading-7 text-neutral-650">
-        Download links expire after 7 days and allow 3 downloads.
+        {downloadPolicyText()}
       </p>
       {error ? (
         <p className="mt-4 rounded-md bg-red-50 p-4 text-sm font-semibold text-red-700">

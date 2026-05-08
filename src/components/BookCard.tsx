@@ -8,23 +8,35 @@ type BookCardProps = {
 export function BookCard({ book }: BookCardProps) {
   const isAvailable = book.status === "Available";
   const actionLabel = isAvailable ? "View Book" : "Coming Soon";
+  const coverImage = book.coverImage?.trim();
 
   return (
     <article className="group grid h-full overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:border-red-200 hover:shadow-xl">
       <Link href={`/books/${book.slug}`} className="block">
-        <div className="flex aspect-[4/5] items-center justify-center bg-gradient-to-br from-neutral-950 via-red-950 to-red-700 p-8 text-center text-white">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-red-100">
-              KD Global
-            </p>
-            <p className="mt-8 text-3xl font-black tracking-tight sm:text-4xl">
-              {book.title}
-            </p>
-            <p className="mt-8 text-sm font-medium text-red-100">
-              {book.author}
-            </p>
+        {coverImage ? (
+          <div className="aspect-[4/5] overflow-hidden bg-neutral-100">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={coverImage}
+              alt={`${book.title} cover`}
+              className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+            />
           </div>
-        </div>
+        ) : (
+          <div className="flex aspect-[4/5] items-center justify-center bg-gradient-to-br from-neutral-950 via-red-950 to-red-700 p-8 text-center text-white">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-red-100">
+                KD Global
+              </p>
+              <p className="mt-8 text-3xl font-black tracking-tight sm:text-4xl">
+                {book.title}
+              </p>
+              <p className="mt-8 text-sm font-medium text-red-100">
+                {book.author}
+              </p>
+            </div>
+          </div>
+        )}
       </Link>
       <div className="flex flex-col p-6">
         <h3 className="mt-2 text-xl font-bold text-neutral-950">

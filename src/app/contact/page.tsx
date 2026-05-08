@@ -36,6 +36,8 @@ const contactCards = [
 ];
 
 export default function ContactPage() {
+  const whatsappUrl = `https://wa.me/${site.whatsapp.replace(/\D/g, "")}`;
+
   return (
     <section className="bg-neutral-50 px-6 py-16 sm:py-20">
       <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.9fr_1.1fr]">
@@ -66,6 +68,14 @@ export default function ContactPage() {
             <p className="mt-4 text-white">{site.email}</p>
             <p>{site.phone}</p>
             <p>{site.address}</p>
+            <Link
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 inline-flex min-h-11 w-fit items-center justify-center rounded-md bg-green-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-green-700"
+            >
+              Chat on WhatsApp
+            </Link>
           </div>
         </div>
 

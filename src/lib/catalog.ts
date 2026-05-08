@@ -24,8 +24,11 @@ type DbBook = {
   currency: string | null;
   cover_image_url: string | null;
   sample_file_url: string | null;
+  sample_file_path: string | null;
   ebook_file_url: string | null;
   ebook_file_path: string | null;
+  payment_link: string | null;
+  what_readers_will_learn: string[] | null;
   format: string | null;
   status: string | null;
   is_physical_available: boolean | null;
@@ -66,19 +69,30 @@ function mapBook(row: DbBook): Book {
     priceInKobo: Number(row.price) * 100,
     coverImage: row.cover_image_url || "",
     sampleFileUrl: row.sample_file_url || "",
+    sampleFilePath: row.sample_file_path || undefined,
     shortDescription: row.short_description || "",
     description: row.description || "",
-    whatReadersWillLearn: [
-      "Clear Christian teaching for practical growth.",
-      "A structured message prepared for careful reading.",
-      "Biblical encouragement for faith and obedience.",
-    ],
+    whatReadersWillLearn: parseList(row.what_readers_will_learn),
     format: row.format === "PDF eBook" ? "eBook PDF" : "eBook PDF",
     status: row.status === "published" ? "Available" : "Coming Soon",
     isPhysicalAvailable: Boolean(row.is_physical_available),
-    paymentLink: "",
+    paymentLink: row.payment_link || "",
     downloadFilePath: row.ebook_file_path || row.ebook_file_url || undefined,
   };
+}
+
+function parseList(value: string[] | null) {
+  const items = (value || [])
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  return items.length
+    ? items
+    : [
+        "Clear Christian teaching for practical growth.",
+        "A structured message prepared for careful reading.",
+        "Biblical encouragement for faith and obedience.",
+      ];
 }
 
 function mapAuthor(row: DbAuthor): Author {

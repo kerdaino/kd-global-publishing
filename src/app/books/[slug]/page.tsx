@@ -45,6 +45,7 @@ export default async function BookPage({ params }: BookPageProps) {
   }
 
   const canCheckout = book.status === "Available" && Boolean(book.id);
+  const coverImage = book.coverImage?.trim();
 
   return (
     <>
@@ -52,28 +53,41 @@ export default async function BookPage({ params }: BookPageProps) {
         <div className="mx-auto grid max-w-7xl gap-8 xl:grid-cols-[0.7fr_1fr_0.72fr] xl:items-start">
           <aside className="lg:sticky lg:top-28">
             <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white p-4 shadow-xl">
-              <div className="flex aspect-[4/5] items-center justify-center rounded-md bg-gradient-to-br from-neutral-950 via-red-950 to-red-700 p-8 text-center text-white">
-                <div>
-                  <p className="text-sm font-semibold uppercase tracking-[0.22em] text-red-100">
-                    KD Global
-                  </p>
-                  <h1 className="mt-10 text-4xl font-black tracking-tight sm:text-5xl">
-                    {book.title}
-                  </h1>
-                  {book.subtitle ? (
-                    <p className="mt-4 text-sm font-medium text-red-100">
-                      {book.subtitle}
-                    </p>
-                  ) : null}
-                  <p className="mt-10 text-sm font-medium text-red-100">
-                    {book.author}
-                  </p>
+              {coverImage ? (
+                <div className="aspect-[4/5] overflow-hidden rounded-md bg-neutral-100">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={coverImage}
+                    alt={`${book.title} cover`}
+                    className="h-full w-full object-cover"
+                  />
                 </div>
-              </div>
-              <div className="mt-4 rounded-md bg-neutral-50 p-4 text-sm leading-7 text-neutral-650">
-                Cover image placeholder. Real cover artwork can be connected
-                later through <span className="font-semibold">coverImage</span>.
-              </div>
+              ) : (
+                <>
+                  <div className="flex aspect-[4/5] items-center justify-center rounded-md bg-gradient-to-br from-neutral-950 via-red-950 to-red-700 p-8 text-center text-white">
+                    <div>
+                      <p className="text-sm font-semibold uppercase tracking-[0.22em] text-red-100">
+                        KD Global
+                      </p>
+                      <h1 className="mt-10 text-4xl font-black tracking-tight sm:text-5xl">
+                        {book.title}
+                      </h1>
+                      {book.subtitle ? (
+                        <p className="mt-4 text-sm font-medium text-red-100">
+                          {book.subtitle}
+                        </p>
+                      ) : null}
+                      <p className="mt-10 text-sm font-medium text-red-100">
+                        {book.author}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-4 rounded-md bg-neutral-50 p-4 text-sm leading-7 text-neutral-650">
+                    Cover image placeholder. Upload cover artwork in the admin
+                    book form to replace this preview.
+                  </div>
+                </>
+              )}
             </div>
           </aside>
 

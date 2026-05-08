@@ -11,6 +11,8 @@ const staticRoutes = [
   "/sermon-to-book",
   "/print-request",
   "/contact",
+  "/terms",
+  "/privacy",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

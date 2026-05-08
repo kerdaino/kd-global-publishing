@@ -1,12 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { createBook, updateBook } from "@/app/admin/actions";
+import {
+  AdminBookForm,
+  type AdminAuthorOption,
+  type AdminBookFormValue,
+} from "@/components/admin/AdminBookForm";
+import { AdminBookDeleteButton } from "@/components/admin/AdminBookDeleteButton";
 import { requireAdmin } from "@/lib/admin";
 import { createAdminClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Admin Books" };
 
-type AuthorOption = { id: string; name: string };
+type BookStatusFilter = "published" | "draft" | "archived";
+
 type BookRow = {
   id: string;
   title: string;
@@ -22,28 +28,46 @@ type BookRow = {
   ebook_file_url: string | null;
   ebook_file_path: string | null;
   sample_file_url: string | null;
+  sample_file_path: string | null;
+  payment_link: string | null;
+  what_readers_will_learn: string[] | null;
   format: string | null;
   status: string | null;
   is_featured: boolean | null;
   is_physical_available: boolean | null;
 };
 
-export default async function AdminBooksPage() {
+export default async function AdminBooksPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ status?: string | string[] }>;
+}) {
   await requireAdmin();
+  const { status } = await searchParams;
+  const selectedStatus = getStatusFilter(status);
   const supabase = createAdminClient();
+  let booksQuery = supabase
+    .from("books")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (selectedStatus) {
+    booksQuery = booksQuery.eq("status", selectedStatus);
+  }
+
   const [{ data: books }, { data: authors }] = await Promise.all([
-    supabase.from("books").select("*").order("created_at", { ascending: false }),
+    booksQuery,
     supabase.from("authors").select("id, name").order("name"),
   ]);
 
   const bookRows = (books || []) as BookRow[];
-  const authorRows = (authors || []) as AuthorOption[];
+  const authorRows = (authors || []) as AdminAuthorOption[];
 
   return (
     <div>
       <h1 className="text-4xl font-black text-neutral-950">Book Management</h1>
       <p className="mt-3 text-neutral-650">
-        Create, edit, publish, feature, price, and attach cover/eBook URLs.
+        Create, edit, publish, feature, price, and upload book files.
       </p>
       <Link
         href="/admin/books/new"
@@ -52,11 +76,32 @@ export default async function AdminBooksPage() {
         Create New Book
       </Link>
 
+      <div className="mt-6 flex flex-wrap gap-2">
+        <FilterLink label="All" href="/admin/books" active={!selectedStatus} />
+        <FilterLink
+          label="Published"
+          href="/admin/books?status=published"
+          active={selectedStatus === "published"}
+        />
+        <FilterLink
+          label="Draft"
+          href="/admin/books?status=draft"
+          active={selectedStatus === "draft"}
+        />
+        <FilterLink
+          label="Archived"
+          href="/admin/books?status=archived"
+          active={selectedStatus === "archived"}
+        />
+      </div>
+
       <details className="mt-8 rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
         <summary className="cursor-pointer text-lg font-black text-neutral-950">
           Create Book
         </summary>
-        <BookForm action={createBook} authors={authorRows} />
+        <div className="mt-6">
+          <AdminBookForm authors={authorRows} mode="create" />
+        </div>
       </details>
 
       {bookRows.length ? (
@@ -83,7 +128,19 @@ export default async function AdminBooksPage() {
               >
                 Open full editor
               </Link>
-              <BookForm action={updateBook} authors={authorRows} book={book} />
+              <div className="mt-5 rounded-md border border-red-100 bg-red-50/40 p-4">
+                <p className="mb-3 text-sm font-semibold text-neutral-700">
+                  Delete archives this book by setting its status to archived.
+                </p>
+                <AdminBookDeleteButton bookId={book.id} bookTitle={book.title} />
+              </div>
+              <div className="mt-5">
+                <AdminBookForm
+                  authors={authorRows}
+                  book={book as AdminBookFormValue}
+                  mode="edit"
+                />
+              </div>
             </details>
           ))}
         </div>
@@ -97,112 +154,33 @@ export default async function AdminBooksPage() {
   );
 }
 
-function BookForm({
-  action,
-  authors,
-  book,
+function getStatusFilter(value: string | string[] | undefined): BookStatusFilter | null {
+  const status = Array.isArray(value) ? value[0] : value;
+
+  return status === "published" || status === "draft" || status === "archived"
+    ? status
+    : null;
+}
+
+function FilterLink({
+  href,
+  label,
+  active,
 }: {
-  action: (formData: FormData) => Promise<void>;
-  authors: AuthorOption[];
-  book?: BookRow;
-}) {
-  return (
-    <form action={action} className="mt-6 grid gap-5">
-      {book ? <input type="hidden" name="id" value={book.id} /> : null}
-      <div className="grid gap-5 md:grid-cols-2">
-        <AdminInput label="Title" name="title" defaultValue={book?.title} required />
-        <AdminInput label="Slug" name="slug" defaultValue={book?.slug} required />
-        <AdminInput label="Subtitle" name="subtitle" defaultValue={book?.subtitle} />
-        <label className="grid gap-2 text-sm font-semibold text-neutral-800">
-          Author
-          <select
-            name="author_id"
-            defaultValue={book?.author_id || ""}
-            className="min-h-12 rounded-md border border-neutral-300 px-4"
-          >
-            <option value="">No author</option>
-            {authors.map((author) => (
-              <option key={author.id} value={author.id}>
-                {author.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <AdminInput label="Category" name="category" defaultValue={book?.category} />
-        <AdminInput label="Price" name="price" type="number" defaultValue={book?.price} required />
-        <AdminInput label="Currency" name="currency" defaultValue={book?.currency || "NGN"} />
-        <AdminInput label="Format" name="format" defaultValue={book?.format || "PDF eBook"} />
-        <AdminInput label="Cover image URL" name="cover_image_url" defaultValue={book?.cover_image_url} />
-        <AdminInput label="Private eBook file path" name="ebook_file_path" defaultValue={book?.ebook_file_path} />
-        <AdminInput label="Fallback eBook file URL" name="ebook_file_url" defaultValue={book?.ebook_file_url} />
-        <AdminInput label="Sample file URL" name="sample_file_url" defaultValue={book?.sample_file_url} />
-        <label className="grid gap-2 text-sm font-semibold text-neutral-800">
-          Status
-          <select
-            name="status"
-            defaultValue={book?.status || "draft"}
-            className="min-h-12 rounded-md border border-neutral-300 px-4"
-          >
-            <option value="draft">Draft</option>
-            <option value="published">Published</option>
-            <option value="archived">Archived</option>
-          </select>
-        </label>
-      </div>
-      <AdminTextarea label="Short description" name="short_description" defaultValue={book?.short_description} />
-      <AdminTextarea label="Description" name="description" defaultValue={book?.description} />
-      <div className="flex flex-wrap gap-5">
-        <label className="flex items-center gap-2 text-sm font-semibold text-neutral-800">
-          <input type="checkbox" name="is_featured" defaultChecked={Boolean(book?.is_featured)} />
-          Mark featured
-        </label>
-        <label className="flex items-center gap-2 text-sm font-semibold text-neutral-800">
-          <input type="checkbox" name="is_physical_available" defaultChecked={Boolean(book?.is_physical_available)} />
-          Physical available
-        </label>
-      </div>
-      <button className="w-fit rounded-md bg-red-700 px-5 py-3 text-sm font-bold text-white transition hover:bg-red-800">
-        {book ? "Save Book" : "Create Book"}
-      </button>
-    </form>
-  );
-}
-
-function AdminInput(props: {
+  href: string;
   label: string;
-  name: string;
-  defaultValue?: string | number | null;
-  type?: string;
-  required?: boolean;
+  active: boolean;
 }) {
   return (
-    <label className="grid gap-2 text-sm font-semibold text-neutral-800">
-      {props.label}
-      <input
-        name={props.name}
-        type={props.type || "text"}
-        defaultValue={props.defaultValue || ""}
-        required={props.required}
-        className="min-h-12 rounded-md border border-neutral-300 px-4"
-      />
-    </label>
-  );
-}
-
-function AdminTextarea(props: {
-  label: string;
-  name: string;
-  defaultValue?: string | null;
-}) {
-  return (
-    <label className="grid gap-2 text-sm font-semibold text-neutral-800">
-      {props.label}
-      <textarea
-        name={props.name}
-        rows={4}
-        defaultValue={props.defaultValue || ""}
-        className="rounded-md border border-neutral-300 px-4 py-3"
-      />
-    </label>
+    <Link
+      href={href}
+      className={
+        active
+          ? "rounded-md bg-neutral-950 px-4 py-2 text-sm font-bold text-white"
+          : "rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm font-bold text-neutral-700 transition hover:border-red-700 hover:text-red-700"
+      }
+    >
+      {label}
+    </Link>
   );
 }

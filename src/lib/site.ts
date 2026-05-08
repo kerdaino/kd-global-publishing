@@ -5,6 +5,7 @@ export const site = {
     "A Christian publishing house helping authors, ministers, and organizations shape messages into excellent books and eBooks.",
   email: "hello@kdglobalpublishing.com",
   phone: "+234 000 000 0000",
+  whatsapp: "+2340000000000",
   address: "Lagos, Nigeria",
   navLinks: [
     { label: "Home", href: "/" },

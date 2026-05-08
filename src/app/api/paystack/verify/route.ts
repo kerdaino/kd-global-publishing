@@ -30,7 +30,8 @@ async function handleVerify(reference: string | null) {
 
 export async function GET(request: Request) {
   try {
-    const reference = new URL(request.url).searchParams.get("reference");
+    const searchParams = new URL(request.url).searchParams;
+    const reference = searchParams.get("reference") || searchParams.get("trxref");
     return await handleVerify(reference);
   } catch (error) {
     return jsonError(error instanceof Error ? error.message : "Unable to verify payment.");
@@ -39,8 +40,8 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const payload = (await request.json()) as { reference?: string };
-    return await handleVerify(payload.reference || null);
+    const payload = (await request.json()) as { reference?: string; trxref?: string };
+    return await handleVerify(payload.reference || payload.trxref || null);
   } catch (error) {
     return jsonError(error instanceof Error ? error.message : "Unable to verify payment.");
   }

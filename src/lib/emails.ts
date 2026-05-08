@@ -1,3 +1,5 @@
+import { downloadPolicyText } from "@/lib/download-policy";
+
 type OrderConfirmationInput = {
   customerName: string;
   bookTitle: string;
@@ -85,7 +87,7 @@ export function orderConfirmationEmail(input: OrderConfirmationInput) {
         <p>Your payment for <strong>${escapeHtml(input.bookTitle)}</strong> has been confirmed.</p>
         <p>You can download your eBook using the secure link below:</p>
         <p><a href="${escapeHtml(input.downloadLink)}" style="display:inline-block; background:#b91c1c; color:#ffffff; padding:12px 18px; text-decoration:none; font-weight:bold;">Download eBook</a></p>
-        <p>This link expires in 7 days and allows 3 downloads.</p>
+        <p>${escapeHtml(downloadPolicyText())}</p>
       `,
     ),
   };
