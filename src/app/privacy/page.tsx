@@ -38,9 +38,9 @@ export default function PrivacyPage() {
             notifications, and maintain basic admin records.
           </PolicyBlock>
           <PolicyBlock title="Payment & Storage Providers">
-            Payments are handled through Paystack. Website data, order records,
-            and secure file storage may be handled through Supabase. Email
-            delivery may be handled through Resend.
+            To operate our bookstore and publishing services, we may use trusted third-party 
+            providers for payment processing, secure file storage, order management, 
+            and email communication. These providers may include Paystack, and Others.
           </PolicyBlock>
           <PolicyBlock title="Your Choices">
             You can contact us to request correction or removal of inquiry

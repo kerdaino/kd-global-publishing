@@ -4,13 +4,19 @@ type LogoProps = {
   tone?: "light" | "dark";
   showText?: boolean;
   className?: string;
+  shortText?: string;
 };
 
-export function Logo({ tone = "light", showText = true, className = "" }: LogoProps) {
+export function Logo({
+  tone = "light",
+  showText = true,
+  className = "",
+  shortText,
+}: LogoProps) {
   const isDark = tone === "dark";
 
   return (
-    <span className={`inline-flex min-w-0 items-center gap-3 ${className}`}>
+    <span className={`inline-flex min-w-0 max-w-full items-center gap-3 ${className}`}>
       <span
         aria-hidden="true"
         className={
@@ -22,16 +28,31 @@ export function Logo({ tone = "light", showText = true, className = "" }: LogoPr
         KD
       </span>
       {showText ? (
-        <span className="min-w-0">
+        <span className="min-w-0 max-w-full">
           <span
             className={
               isDark
-                ? "block truncate text-base font-black tracking-tight text-white"
-                : "block truncate text-base font-black tracking-tight text-neutral-950"
+                ? shortText
+                  ? "hidden truncate text-base font-black tracking-tight text-white sm:block"
+                  : "block truncate text-base font-black tracking-tight text-white"
+                : shortText
+                  ? "hidden truncate text-base font-black tracking-tight text-neutral-950 sm:block"
+                  : "block truncate text-base font-black tracking-tight text-neutral-950"
             }
           >
             {site.name}
           </span>
+          {shortText ? (
+            <span
+              className={
+                isDark
+                  ? "block truncate text-base font-black tracking-tight text-white sm:hidden"
+                  : "block truncate text-base font-black tracking-tight text-neutral-950 sm:hidden"
+              }
+            >
+              {shortText}
+            </span>
+          ) : null}
         </span>
       ) : null}
     </span>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { logoutAdmin } from "@/app/admin/actions";
 import { Logo } from "@/components/Logo";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 const adminLinks = [
   { label: "Overview", href: "/admin" },
@@ -32,6 +33,9 @@ export function AdminSidebar() {
           </Link>
         ))}
       </nav>
+      <div className="mt-4 border-t border-white/10 pt-4">
+        <ThemeToggle />
+      </div>
       <form action={logoutAdmin} className="mt-4 border-t border-white/10 pt-4">
         <button
           type="submit"
