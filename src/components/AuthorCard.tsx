@@ -1,16 +1,19 @@
 import Link from "next/link";
-import { Logo } from "@/components/Logo";
+import { AuthorAvatar } from "@/components/AuthorAvatar";
 import type { Author } from "@/types";
 
 export function AuthorCard({ author }: { author: Author }) {
   return (
     <article className="group rounded-lg border border-neutral-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-red-200 hover:shadow-lg">
-      <div className="flex size-16 items-center justify-center rounded-md bg-neutral-950 text-white">
-        <Logo tone="dark" showText={false} className="[&>span:first-child]:size-12" />
-      </div>
+      <AuthorAvatar image={author.image} name={author.name} />
       <p className="mt-5 text-sm font-semibold uppercase tracking-[0.16em] text-red-700">
-        {author.role}
+        {author.roleTitle}
       </p>
+      {author.ministryName ? (
+        <p className="mt-2 text-sm font-semibold text-neutral-500">
+          {author.ministryName}
+        </p>
+      ) : null}
       <h2 className="mt-2 text-2xl font-black text-neutral-950 transition group-hover:text-red-700">
         <Link href={`/authors/${author.slug}`}>{author.name}</Link>
       </h2>

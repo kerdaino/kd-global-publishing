@@ -1,4 +1,4 @@
-export type BookStatus = "Available" | "Available Soon";
+export type BookStatus = "Available";
 
 export type BookFormat = "eBook PDF" | "Print" | "eBook PDF + Print";
 
@@ -26,11 +26,22 @@ export type Book = {
 };
 
 export type Author = {
+  id?: string;
   name: string;
   slug: string;
-  role: string;
+  roleTitle: string;
   bio: string;
   image: string;
+  email?: string;
+  ministryName?: string;
+  websiteUrl?: string;
+  facebookUrl?: string;
+  instagramUrl?: string;
+  xUrl?: string;
+  linkedinUrl?: string;
+  status?: "active" | "hidden";
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type InquiryType = "publishing" | "sermon-book" | "print-request";

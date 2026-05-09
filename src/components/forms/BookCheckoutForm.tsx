@@ -24,7 +24,7 @@ export function BookCheckoutForm({
 
     if (!bookId) {
       setState("error");
-      setError("Online checkout is unavailable for this title.");
+      setError("Online checkout is not open for this title.");
       return;
     }
 
@@ -83,10 +83,10 @@ export function BookCheckoutForm({
         </p>
         <div className="mt-5 rounded-md border border-neutral-200 bg-neutral-100 p-4">
           <p className="text-sm font-bold text-neutral-700">
-            Purchase unavailable
+            Purchase not open
           </p>
           <p className="mt-2 text-sm leading-7 text-neutral-600">
-            Online checkout is not open for this title yet.
+            Online checkout is not open for this title.
           </p>
         </div>
       </div>
@@ -111,8 +111,8 @@ export function BookCheckoutForm({
         </p>
       </div>
       <p className="mt-5 text-sm leading-7 text-neutral-650">
-        Enter your details and continue to secure Paystack checkout. After
-        payment, your secure download link will be sent to your email address.
+        Enter your details and continue to secure Paystack checkout. After your
+        payment is confirmed, your download link will be sent to your email address.
       </p>
       <div className="mt-5 grid gap-4">
         <label htmlFor={`${formId}-name`} className="grid gap-2 text-sm font-semibold text-neutral-800">

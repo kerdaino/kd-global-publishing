@@ -44,7 +44,7 @@ export async function POST(request: Request) {
     const amount = Number(book.price);
 
     if (!amount || amount <= 0) {
-      return jsonError("This book is not available for payment yet.");
+      return jsonError("Online checkout is not open for this title.");
     }
 
     const reference = createPaymentReference();

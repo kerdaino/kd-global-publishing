@@ -1,181 +1,171 @@
 # KD Global Publishing House
 
-Production-ready Next.js platform for KD Global Publishing House, a Christian publishing brand under KD Global.
+KD Global Publishing House is a Christian publishing platform built by KD Global.
 
-The platform supports a public website, bookstore, author pages, publishing inquiries, sermon-to-book inquiries, physical print requests, Paystack checkout preparation, secure eBook downloads, Resend email notifications, and a protected Supabase-powered admin dashboard.
+Portfolio: [https://www.kdevglobal.com](https://www.kdevglobal.com)
+
+The platform supports eBook publishing, author profiles, publishing service inquiries, sermon-to-book production, print requests, Paystack checkout, secure eBook delivery, Resend email notifications, and a private admin dashboard.
 
 ## Tech Stack
 
-- Next.js App Router
+- Next.js
 - TypeScript
 - Tailwind CSS
-- Supabase Auth, Database, and Storage
-- Paystack payments
-- Resend email
+- Supabase Database, Auth, and Storage
+- Paystack
+- Resend
+- Vercel
 
-## Local Setup
+## Core Features
 
-Install dependencies:
+- Public bookstore for published eBooks
+- Book detail pages with checkout
+- Author profiles with uploaded profile images
+- Paystack checkout and payment verification
+- Secure eBook download tokens
+- Resend order and inquiry notifications
+- Publishing inquiry forms
+- Sermon-to-book inquiry forms
+- Print request forms
+- Admin dashboard for books, authors, orders, inquiries, sermon projects, and print requests
+
+## Environment Variables
+
+Create `.env.local` for local development and set the same values in Vercel for production.
 
 ```bash
-npm install
-```
-
-Create `.env.local`:
-
-```bash
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_SITE_URL=https://publishing.kdevglobal.com
 
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 
 PAYSTACK_SECRET_KEY=
-NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY=
 
 RESEND_API_KEY=
+RESEND_FROM_EMAIL=
 ADMIN_NOTIFY_EMAIL=
-RESEND_FROM_EMAIL="KD Global Publishing House <hello@example.com>"
+
+NEXT_PUBLIC_CONTACT_EMAIL=
+NEXT_PUBLIC_CONTACT_PHONE=
+NEXT_PUBLIC_CONTACT_WHATSAPP=
+NEXT_PUBLIC_CONTACT_ADDRESS=
 ```
 
-Run the development server:
+Only `NEXT_PUBLIC_*` values are available to browser code. Keep `SUPABASE_SERVICE_ROLE_KEY`, `PAYSTACK_SECRET_KEY`, and `RESEND_API_KEY` server-side only.
+
+Contact fields are optional. If an official publishing email, phone, WhatsApp number, or address is not ready, leave the matching public contact variable empty and the site will hide that field.
+
+## Local Development
 
 ```bash
+npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`.
+Open the local URL printed by Next.js.
 
-## Supabase Setup
-
-1. Create a Supabase project.
-2. Run [supabase/schema.sql](/supabase/schema.sql) in the Supabase SQL editor.
-3. Create a Supabase Auth user for each admin.
-4. Insert the admin email into `admin_users`.
-
-Example:
-
-```sql
-insert into public.admin_users (email)
-values ('admin@example.com');
-```
-
-The first successful admin login links the authenticated Supabase user ID to that admin row.
-
-## Storage Buckets
-
-The schema creates these buckets:
-
-- `book-covers`: public cover images
-- `sample-files`: public sample downloads
-- `ebook-files`: private paid eBook files
-
-For private eBooks, store the file path in `books.ebook_file_path`, for example:
-
-```text
-mums-first-book.pdf
-```
-
-The download page validates the token and creates a short-lived signed URL from the private `ebook-files` bucket. `ebook_file_url` remains available as a fallback for manually hosted public files.
-
-Secure download tokens expire after 30 days and allow 5 downloads. These values are configured in `src/lib/download-policy.ts` with `DOWNLOAD_TOKEN_EXPIRY_DAYS` and `DOWNLOAD_TOKEN_MAX_DOWNLOADS`.
-
-## Payments
-
-Paystack flow:
-
-1. Buyer submits name, email, and optional phone from a book page.
-2. `/api/paystack/initialize` creates a pending order and initializes Paystack.
-3. Paystack redirects to `/checkout/success?reference=...`.
-4. `/api/paystack/verify` verifies payment, marks the order paid, creates a download token, and sends emails when Resend is configured.
-5. `/api/paystack/webhook` also handles `charge.success` safely for duplicate-tolerant fulfillment.
-
-Amount is stored in naira in Supabase and sent to Paystack in kobo.
-
-## Email
-
-Resend is optional until a sending domain is verified. If `RESEND_API_KEY` or
-`RESEND_FROM_EMAIL` is missing, payment verification still marks the order paid,
-creates the secure download token, and shows the download link on the checkout
-success page. Email failures are logged and do not fail checkout.
-
-When configured, Resend sends:
-
-- customer eBook download confirmation
-- admin order notification
-- admin publishing inquiry notification
-- admin sermon-to-book notification
-- admin print request notification
-
-Admin notification emails are only attempted when Resend is configured.
-
-## Admin Dashboard
-
-Admin routes live under `/admin`.
-
-Protected pages:
-
-- `/admin`
-- `/admin/books`
-- `/admin/orders`
-- `/admin/inquiries`
-- `/admin/sermon-projects`
-- `/admin/print-requests`
-
-Login:
-
-```text
-/admin/login
-```
-
-Only authenticated users whose email exists in `admin_users` can access the dashboard.
-
-## Production Checks
-
-Run before deployment:
+Before deployment:
 
 ```bash
 npm run lint
 npm run build
 ```
 
-## Vercel Deployment Notes
+## Supabase Setup
 
-1. Push the repository to GitHub.
-2. Import the project in Vercel.
-3. Add all environment variables in Vercel Project Settings.
-4. Set `NEXT_PUBLIC_SITE_URL` to the production domain, for example:
+1. Create a Supabase project.
+2. Run `supabase/schema.sql` in the Supabase SQL editor, or apply the migration files in `supabase/migrations`.
+3. Create Supabase Auth users for approved admins.
+4. Add each admin email to `public.admin_users`.
 
-```text
-https://kdglobalpublishing.com
+```sql
+insert into public.admin_users (email)
+values ('admin@your-domain.com');
 ```
 
-5. Add the production Paystack callback URL:
+The first successful admin login links the Supabase Auth user ID to the matching admin row.
+
+## Storage Buckets
+
+The schema configures these buckets:
+
+- `author-images`: public author profile images
+- `book-covers`: public book cover images
+- `sample-files`: public PDF samples
+- `ebook-files`: private paid eBook files
+
+Author images and book covers are served through public Supabase Storage URLs. Paid eBook files should use `books.ebook_file_path` with files stored in the private `ebook-files` bucket.
+
+## Paystack Setup
+
+Set `PAYSTACK_SECRET_KEY` in the server environment.
+
+Configure Paystack with:
+
+- Callback URL: `https://publishing.kdevglobal.com/checkout/success`
+- Webhook URL: `https://publishing.kdevglobal.com/api/paystack/webhook`
+
+Checkout flow:
+
+1. A reader submits checkout details from a book page.
+2. The app creates a pending order in Supabase.
+3. Paystack collects payment.
+4. The app verifies the transaction.
+5. A secure download token is created for the order.
+6. The reader receives the download link on the success page and by email when Resend is configured.
+
+## Resend Setup
+
+Set:
+
+- `RESEND_API_KEY`
+- `RESEND_FROM_EMAIL`
+- `ADMIN_NOTIFY_EMAIL`
+
+Resend sends customer download emails and admin notifications for orders, publishing inquiries, sermon-to-book inquiries, and print requests.
+
+## Admin Setup
+
+Admin access is intentionally not linked from public navigation. Go directly to:
 
 ```text
-https://your-domain.com/checkout/success
+/admin/login
 ```
 
-6. Add the Paystack webhook URL:
+Dashboard areas:
 
-```text
-https://your-domain.com/api/paystack/webhook
-```
+- Overview
+- Books
+- Authors
+- Orders
+- Inquiries
+- Sermon Projects
+- Print Requests
 
-7. Optional: configure Resend sender/domain verification before setting `RESEND_API_KEY` and `RESEND_FROM_EMAIL`.
+## Vercel Deployment
 
-## Important Environment Variables
+1. Import the repository into Vercel.
+2. Set all production environment variables.
+3. Confirm `NEXT_PUBLIC_SITE_URL` is `https://publishing.kdevglobal.com`.
+4. Deploy.
+5. Verify Paystack callback and webhook URLs.
+6. Verify Supabase Storage upload policies for admin users.
+7. Run a live checkout using the correct Paystack mode before launch.
 
-| Variable | Purpose |
-| --- | --- |
-| `NEXT_PUBLIC_SITE_URL` | Canonical site URL for metadata, callbacks, and download links |
-| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Browser-safe Supabase anon key |
-| `SUPABASE_SERVICE_ROLE_KEY` | Server-only Supabase key for admin operations, payments, and downloads |
-| `PAYSTACK_SECRET_KEY` | Server-only Paystack secret key |
-| `NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY` | Browser-safe Paystack public key for future client-side features |
-| `RESEND_API_KEY` | Optional server-only Resend API key |
-| `ADMIN_NOTIFY_EMAIL` | Email address that receives admin notifications |
-| `RESEND_FROM_EMAIL` | Optional verified Resend sender address |
+## Launch Checklist
 
-Never expose `SUPABASE_SERVICE_ROLE_KEY`, `PAYSTACK_SECRET_KEY`, or `RESEND_API_KEY` to the browser.
+- Supabase schema applied
+- Admin user created and added to `admin_users`
+- Storage buckets available
+- Published books entered with cover images and eBook file paths
+- Active authors created with profile images
+- Paystack secret key set for the intended environment
+- Paystack callback and webhook URLs configured
+- Resend sender verified
+- Admin notification email set
+- Public contact values confirmed or left empty
+- `npm run lint` passes
+- `npm run build` passes
+- Public navigation has no admin links
+- `/admin/login` works by direct URL

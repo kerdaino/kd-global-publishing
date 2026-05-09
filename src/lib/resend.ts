@@ -24,11 +24,11 @@ export async function sendEmailSafely({ to, subject, html }: SendEmailInput) {
   try {
     const resend = getResendClient();
 
-    if (!resend) {
+    if (!resend || !to) {
       return {
         ok: false,
         skipped: true,
-        error: "RESEND_API_KEY or RESEND_FROM_EMAIL is not set.",
+        error: "Email delivery is not configured.",
       };
     }
 
@@ -54,7 +54,8 @@ export function getAdminNotifyEmail() {
   return (
     process.env.ADMIN_NOTIFY_EMAIL ||
     process.env.ADMIN_NOTIFICATION_EMAIL ||
-    "kdevglobal@gmail.com"
+    process.env.NEXT_PUBLIC_CONTACT_EMAIL ||
+    ""
   );
 }
 

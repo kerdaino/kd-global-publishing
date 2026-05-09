@@ -1,5 +1,6 @@
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin";
+import { isAuthorSlugDuplicateError } from "@/lib/admin-authors";
 import { createAdminClient } from "@/lib/supabase/server";
 
 type BookPayload = Record<string, unknown>;
@@ -23,6 +24,10 @@ export async function saveAdminBook(payload: BookPayload, id?: string) {
       .single();
 
     if (authorError || !author) {
+      if (authorError && isAuthorSlugDuplicateError(authorError)) {
+        throw new Error("That quick-created author slug is already in use. Select the existing author or use a different author name.");
+      }
+
       throw new Error(authorError?.message || "Unable to create author.");
     }
 

@@ -8,19 +8,19 @@ import { site } from "@/lib/site";
 export const metadata: Metadata = createPageMetadata({
   title: "Contact",
   description:
-    "Send an inquiry to KD Global Publishing House about eBooks, publishing services, or sermon-to-book projects.",
+    "Contact KD Global Publishing House about books, publishing support, sermon-to-book projects, or print requests.",
   path: "/contact",
 });
 
 const contactCards = [
   {
     title: "Book orders",
-    text: "Ask about available eBooks, upcoming releases, secure checkout, and how to receive your copy.",
+    text: "Ask about published eBooks, secure checkout, and how to receive your copy.",
     href: "/bookstore",
   },
   {
     title: "Publishing inquiries",
-    text: "Share your manuscript, book idea, or publishing need so we can help identify the right next step.",
+    text: "Share your manuscript, book idea, or publishing need so we can help you take a clear next step.",
     href: "/publishing-services",
   },
   {
@@ -46,7 +46,7 @@ export default function ContactPage() {
           <SectionHeader
             eyebrow="Publishing Inquiry"
             title="Start a conversation about your book or message."
-            description="Use this page for book orders, publishing support, sermon-to-book projects, and physical printing inquiries."
+            description="Use this page for book orders, publishing support, sermon-to-book projects, and print requests."
             headingLevel="h1"
           />
           <div className="mt-8 grid gap-4">
@@ -66,11 +66,13 @@ export default function ContactPage() {
           </div>
           <div className="mt-6 rounded-lg bg-neutral-950 p-6 text-sm leading-7 text-neutral-300 shadow-sm">
             <p className="font-bold text-white">Contact details</p>
-            <Link href={`mailto:${site.email}`} className="mt-4 block w-fit text-white transition hover:text-red-200">
-              {site.email}
-            </Link>
+            {site.email ? (
+              <Link href={`mailto:${site.email}`} className="mt-4 block w-fit text-white transition hover:text-red-200">
+                {site.email}
+              </Link>
+            ) : null}
             {site.phone ? <p>{site.phone}</p> : null}
-            <p>{site.address}</p>
+            {site.address ? <p>{site.address}</p> : null}
             {whatsappNumber ? (
               <Link
                 href={whatsappUrl}
@@ -79,6 +81,16 @@ export default function ContactPage() {
                 className="mt-3 inline-flex min-h-11 w-fit items-center justify-center rounded-md bg-green-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-green-700"
               >
                 Chat on WhatsApp
+              </Link>
+            ) : null}
+            {!site.email && !site.phone && !site.address && !whatsappNumber ? (
+              <Link
+                href={site.portfolioUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 block w-fit text-white transition hover:text-red-200"
+              >
+                Visit KD Global
               </Link>
             ) : null}
           </div>

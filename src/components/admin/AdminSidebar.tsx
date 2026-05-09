@@ -5,6 +5,7 @@ import { Logo } from "@/components/Logo";
 const adminLinks = [
   { label: "Overview", href: "/admin" },
   { label: "Books", href: "/admin/books" },
+  { label: "Authors", href: "/admin/authors" },
   { label: "Orders", href: "/admin/orders" },
   { label: "Inquiries", href: "/admin/inquiries" },
   { label: "Sermon Projects", href: "/admin/sermon-projects" },

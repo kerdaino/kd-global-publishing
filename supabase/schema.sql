@@ -23,8 +23,48 @@ create table if not exists public.authors (
   bio text,
   image_url text,
   email text,
-  created_at timestamp with time zone default now()
+  role_title text,
+  ministry_name text,
+  website_url text,
+  facebook_url text,
+  instagram_url text,
+  x_url text,
+  linkedin_url text,
+  status text default 'active',
+  created_at timestamp with time zone default now(),
+  updated_at timestamp with time zone default now()
 );
+
+alter table public.authors
+add column if not exists role_title text;
+
+alter table public.authors
+add column if not exists ministry_name text;
+
+alter table public.authors
+add column if not exists website_url text;
+
+alter table public.authors
+add column if not exists facebook_url text;
+
+alter table public.authors
+add column if not exists instagram_url text;
+
+alter table public.authors
+add column if not exists x_url text;
+
+alter table public.authors
+add column if not exists linkedin_url text;
+
+alter table public.authors
+add column if not exists status text default 'active';
+
+alter table public.authors
+add column if not exists updated_at timestamp with time zone default now();
+
+update public.authors
+set status = 'active'
+where status is null;
 
 create table if not exists public.books (
   id uuid primary key default gen_random_uuid(),
@@ -146,6 +186,7 @@ create table if not exists public.admin_users (
 );
 
 create index if not exists authors_slug_idx on public.authors(slug);
+create index if not exists authors_status_idx on public.authors(status);
 create index if not exists books_slug_idx on public.books(slug);
 create index if not exists books_ebook_file_path_idx on public.books(ebook_file_path);
 create index if not exists books_sample_file_path_idx on public.books(sample_file_path);
@@ -168,7 +209,7 @@ drop policy if exists "Public can read authors" on public.authors;
 create policy "Public can read authors"
 on public.authors
 for select
-using (true);
+using (status = 'active');
 
 drop policy if exists "Public can read published books" on public.books;
 create policy "Public can read published books"
@@ -270,11 +311,18 @@ before update on public.books
 for each row
 execute function public.set_updated_at();
 
+drop trigger if exists set_authors_updated_at on public.authors;
+create trigger set_authors_updated_at
+before update on public.authors
+for each row
+execute function public.set_updated_at();
+
 -- Supabase Storage buckets for book assets.
 -- Covers and sample files are public. Full eBook files stay private and are
 -- served through short-lived signed URLs from the secure download route.
 insert into storage.buckets (id, name, public, allowed_mime_types)
 values
+  ('author-images', 'author-images', true, array['image/jpeg', 'image/png', 'image/webp']),
   ('book-covers', 'book-covers', true, array['image/jpeg', 'image/png', 'image/webp']),
   ('sample-files', 'sample-files', true, array['application/pdf']),
   ('ebook-files', 'ebook-files', false, array['application/pdf', 'application/epub+zip'])
@@ -290,6 +338,12 @@ on storage.objects
 for select
 using (bucket_id = 'book-covers');
 
+drop policy if exists "Public can read author images" on storage.objects;
+create policy "Public can read author images"
+on storage.objects
+for select
+using (bucket_id = 'author-images');
+
 drop policy if exists "Public can read sample files" on storage.objects;
 create policy "Public can read sample files"
 on storage.objects
@@ -302,6 +356,13 @@ on storage.objects
 for all
 using (bucket_id = 'book-covers' and public.is_admin())
 with check (bucket_id = 'book-covers' and public.is_admin());
+
+drop policy if exists "Admins can manage author images" on storage.objects;
+create policy "Admins can manage author images"
+on storage.objects
+for all
+using (bucket_id = 'author-images' and auth.role() = 'authenticated' and public.is_admin())
+with check (bucket_id = 'author-images' and auth.role() = 'authenticated' and public.is_admin());
 
 drop policy if exists "Admins can manage sample files" on storage.objects;
 create policy "Admins can manage sample files"

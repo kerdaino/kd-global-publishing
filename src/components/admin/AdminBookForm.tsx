@@ -478,7 +478,10 @@ function UploadField({
   }[state];
 
   return (
-    <label htmlFor={id} className="grid gap-2 text-sm font-semibold text-neutral-800">
+    <label
+      htmlFor={id}
+      className="grid min-w-0 gap-2 text-sm font-semibold text-neutral-800"
+    >
       {config.label}
       <input
         id={id}
@@ -486,7 +489,7 @@ function UploadField({
         type="file"
         accept={config.accept}
         onChange={(event) => onFileChange(configKey, event.currentTarget.files?.[0] || null)}
-        className="min-h-12 rounded-md border border-neutral-300 px-4 py-3 text-base font-normal file:mr-4 file:rounded-md file:border-0 file:bg-neutral-950 file:px-4 file:py-2 file:text-sm file:font-bold file:text-white"
+        className="min-h-12 w-full min-w-0 rounded-md border border-neutral-300 px-4 py-3 text-base font-normal file:mr-4 file:rounded-md file:border-0 file:bg-neutral-950 file:px-4 file:py-2 file:text-sm file:font-bold file:text-white"
       />
       {configKey === "cover" ? (
         <span className="text-xs font-semibold text-neutral-500">
@@ -501,7 +504,11 @@ function UploadField({
       {configKey === "cover" && currentValue ? (
         <span className="aspect-[5/8] w-28 overflow-hidden rounded-md border border-neutral-200 bg-neutral-50">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={currentValue} alt="Current book cover" className="h-full w-full object-cover" />
+          <img
+            src={currentValue}
+            alt="Current book cover"
+            className="block h-full w-full object-cover"
+          />
         </span>
       ) : null}
       {currentValue && configKey !== "cover" ? (

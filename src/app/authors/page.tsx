@@ -6,7 +6,7 @@ import { createPageMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = createPageMetadata({
   title: "Authors",
-  description: "Meet authors and ministry voices published by KD Global Publishing House.",
+  description: "Meet the authors and ministry voices published by KD Global Publishing House.",
   path: "/authors",
 });
 
@@ -19,7 +19,7 @@ export default async function AuthorsPage() {
         <SectionHeader
           headingLevel="h1"
           title="Authors"
-          description="KD Global Publishing House publishes Christian authors, ministers, and ministry voices with truth-filled books for lasting impact."
+          description="Meet Christian authors, ministers, and ministry voices whose books carry truth, discipleship, and hope."
         />
         {authors.length ? (
           <div className="mt-10 grid gap-6 md:grid-cols-2">
@@ -29,7 +29,7 @@ export default async function AuthorsPage() {
           </div>
         ) : (
           <div className="mt-10 rounded-lg border border-neutral-200 bg-white p-8 text-neutral-650">
-            Author profiles will appear here soon.
+            Author profiles will be available here as published titles are released.
           </div>
         )}
       </div>

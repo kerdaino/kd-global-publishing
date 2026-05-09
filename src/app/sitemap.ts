@@ -1,6 +1,5 @@
 import type { MetadataRoute } from "next";
-import { books } from "@/data/books";
-import { authors } from "@/data/authors";
+import { getAuthorsFromCatalog, getPublishedBooks } from "@/lib/catalog";
 import { getBaseUrl } from "@/lib/utils";
 
 const staticRoutes = [
@@ -15,9 +14,13 @@ const staticRoutes = [
   "/privacy",
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getBaseUrl();
   const now = new Date();
+  const [books, authors] = await Promise.all([
+    getPublishedBooks(),
+    getAuthorsFromCatalog(),
+  ]);
   const dynamicRoutes = [
     ...books.map((book) => `/books/${book.slug}`),
     ...authors.map((author) => `/authors/${author.slug}`),

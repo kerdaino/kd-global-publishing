@@ -7,7 +7,7 @@ import { createPageMetadata } from "@/lib/metadata";
 export const metadata: Metadata = createPageMetadata({
   title: "Publishing Services",
   description:
-    "Editing, expansion, structuring, formatting, cover design direction, eBook publishing, and print preparation for Christian authors, ministers, and ministries.",
+    "Editing, manuscript development, formatting, cover direction, eBook publishing, and print preparation for Christian authors, ministers, and ministries.",
   path: "/publishing-services",
 });
 
@@ -18,7 +18,7 @@ const services = [
   },
   {
     title: "Book expansion and rewriting support",
-    text: "We help develop short drafts, outlines, teachings, and testimonies into fuller chapters without losing the author’s voice.",
+    text: "We help shape drafts, outlines, teachings, and testimonies into fuller chapters while preserving the author’s voice.",
   },
   {
     title: "Book arrangement and chapter structuring",
@@ -49,7 +49,7 @@ const services = [
 const process = [
   {
     title: "Submit your idea/manuscript",
-    text: "Send the book idea, draft, sermon series, teaching notes, or existing manuscript so we can understand the message and audience.",
+    text: "Send the book idea, draft, sermon series, teaching notes, or manuscript so we can understand the message and audience.",
   },
   {
     title: "We review and structure",
@@ -79,8 +79,8 @@ export default function PublishingServicesPage() {
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-neutral-650">
               KD Global Publishing House helps Christian authors, ministers,
-              and ministries with editing, expansion, structuring, formatting,
-              cover design, eBook publishing, and print preparation.
+              and ministries with editing, manuscript development, formatting,
+              cover direction, eBook publishing, and print preparation.
             </p>
           </div>
           <div className="rounded-lg border border-neutral-200 bg-neutral-950 p-6 text-white shadow-2xl">
@@ -167,7 +167,7 @@ export default function PublishingServicesPage() {
           <SectionHeader
             eyebrow="Start here"
             title="Tell us about the book you want to publish."
-            description="This inquiry form is ready for Supabase storage and Resend notifications through the API route."
+            description="Share the heart of the book, where the manuscript stands, and the kind of support you need."
           />
           <PublishingInquiryForm />
         </div>

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { Book } from "@/data/books";
+import type { Book } from "@/types";
 
 type BookCardProps = {
   book: Book;
@@ -11,24 +11,27 @@ export function BookCard({ book }: BookCardProps) {
   const coverImage = book.coverImage?.trim();
 
   return (
-    <article className="group grid h-full overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:border-red-200 hover:shadow-xl">
-      <Link href={`/books/${book.slug}`} className="block">
+    <article className="group grid h-full min-w-0 overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:border-red-200 hover:shadow-xl">
+      <Link
+        href={`/books/${book.slug}`}
+        className="block min-w-0 overflow-hidden rounded-t-lg"
+      >
         {coverImage ? (
-          <div className="aspect-[5/8] overflow-hidden bg-neutral-100">
+          <div className="aspect-[5/8] w-full overflow-hidden rounded-t-lg bg-neutral-100">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={coverImage}
               alt={`${book.title} cover`}
-              className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+              className="block h-full w-full object-cover transition duration-300 group-hover:scale-105"
             />
           </div>
         ) : (
-          <div className="flex aspect-[5/8] items-center justify-center bg-gradient-to-br from-neutral-950 via-red-950 to-red-700 p-8 text-center text-white">
-            <div>
+          <div className="flex aspect-[5/8] w-full items-center justify-center overflow-hidden rounded-t-lg bg-gradient-to-br from-neutral-950 via-red-950 to-red-700 p-8 text-center text-white">
+            <div className="min-w-0">
               <p className="text-sm font-semibold uppercase tracking-[0.22em] text-red-100">
                 KD Global
               </p>
-              <p className="mt-8 text-3xl font-black tracking-tight sm:text-4xl">
+              <p className="mt-8 break-words text-3xl font-black tracking-tight sm:text-4xl">
                 {book.title}
               </p>
               <p className="mt-8 text-sm font-medium text-red-100">
@@ -38,11 +41,11 @@ export function BookCard({ book }: BookCardProps) {
           </div>
         )}
       </Link>
-      <div className="flex flex-col p-6">
+      <div className="flex min-w-0 flex-col p-6">
         <h3 className="mt-2 text-xl font-bold text-neutral-950">
           <Link
             href={`/books/${book.slug}`}
-            className="transition group-hover:text-red-700"
+            className="break-words transition group-hover:text-red-700"
           >
             {book.title}
           </Link>
@@ -68,8 +71,10 @@ export function BookCard({ book }: BookCardProps) {
             {book.status}
           </span>
         </div>
-        <div className="mt-6 flex items-center justify-between gap-4">
-          <span className="font-bold text-neutral-950">{book.price}</span>
+        <div className="mt-6 flex min-w-0 flex-wrap items-center justify-between gap-4">
+          <span className="min-w-0 break-words font-bold text-neutral-950">
+            {book.price}
+          </span>
           <Link
             href={`/books/${book.slug}`}
             className={

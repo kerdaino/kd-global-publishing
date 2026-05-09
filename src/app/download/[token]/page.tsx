@@ -115,7 +115,7 @@ function DownloadError({ message }: { message: string }) {
     <section className="bg-neutral-50 px-6 py-20">
       <div className="mx-auto max-w-3xl rounded-lg border border-neutral-200 bg-white p-8 text-center shadow-sm">
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-red-700">
-          Download unavailable
+          Download Support
         </p>
         <h1 className="mt-4 text-4xl font-black text-neutral-950">
           This eBook link cannot be used.

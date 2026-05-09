@@ -11,8 +11,8 @@ export function Footer() {
         <div>
           <p className="text-lg font-black text-neutral-950">{site.name}</p>
           <p className="mt-4 max-w-md text-sm leading-7 text-neutral-600">
-            {site.description} We support eBook publishing, book development,
-            manuscript preparation, and print-ready production planning.
+            {site.description} We help shape manuscripts, sermons, teachings,
+            and ministry resources into books prepared with care.
           </p>
         </div>
         <div>
@@ -32,11 +32,13 @@ export function Footer() {
         <div>
           <p className="font-bold text-neutral-950">Contact</p>
           <div className="mt-4 grid gap-3 text-sm text-neutral-600">
-            <Link href={`mailto:${site.email}`} className="w-fit rounded-sm transition duration-200 hover:text-red-700 focus-visible:text-red-700">
-              {site.email}
-            </Link>
+            {site.email ? (
+              <Link href={`mailto:${site.email}`} className="w-fit rounded-sm transition duration-200 hover:text-red-700 focus-visible:text-red-700">
+                {site.email}
+              </Link>
+            ) : null}
             {site.phone ? <p>{site.phone}</p> : null}
-            <p>{site.address}</p>
+            {site.address ? <p>{site.address}</p> : null}
             {whatsappNumber ? (
               <Link
                 href={whatsappUrl}
@@ -52,9 +54,9 @@ export function Footer() {
       </div>
       <div className="mx-auto mt-10 flex max-w-6xl flex-col gap-5 border-t border-neutral-200 pt-6 text-sm text-neutral-500 md:flex-row md:items-center md:justify-between">
         <p className="leading-7">
-          © {new Date().getFullYear()} {site.name}. Built by{" "}
+          © 2026 {site.name}. Built by{" "}
           <Link
-            href="https://www.kdevglobal.com"
+            href={site.portfolioUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="rounded-sm font-bold text-neutral-700 transition duration-200 hover:text-red-700 focus-visible:text-red-700"
@@ -72,12 +74,6 @@ export function Footer() {
           </Link>
           <Link href="/privacy" className="rounded-sm transition duration-200 hover:text-red-700 focus-visible:text-red-700">
             Privacy Policy
-          </Link>
-          <Link
-            href="/admin/login"
-            className="rounded-sm text-neutral-400 transition duration-200 hover:text-red-700 focus-visible:text-red-700"
-          >
-            Admin Login
           </Link>
         </div>
       </div>

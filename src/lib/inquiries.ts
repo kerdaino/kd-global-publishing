@@ -27,7 +27,7 @@ export async function handleInquiry({
   validateInquiry(type, payload);
 
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    throw new Error("Inquiry submissions are not available right now.");
+    throw new Error("We could not receive your inquiry right now. Please try again shortly.");
   }
 
   const supabase = createAdminClient();

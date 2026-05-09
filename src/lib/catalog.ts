@@ -1,5 +1,3 @@
-import { authors as fallbackAuthors } from "@/data/authors";
-import { books as fallbackBooks } from "@/data/books";
 import { createAdminClient } from "@/lib/supabase/server";
 import type { Author, Book } from "@/types";
 
@@ -10,6 +8,16 @@ type DbAuthor = {
   bio: string | null;
   image_url: string | null;
   email: string | null;
+  role_title: string | null;
+  ministry_name: string | null;
+  website_url: string | null;
+  facebook_url: string | null;
+  instagram_url: string | null;
+  x_url: string | null;
+  linkedin_url: string | null;
+  status: string | null;
+  created_at: string | null;
+  updated_at: string | null;
 };
 
 type DbBook = {
@@ -74,7 +82,7 @@ function mapBook(row: DbBook): Book {
     description: row.description || "",
     whatReadersWillLearn: parseList(row.what_readers_will_learn),
     format: row.format === "PDF eBook" ? "eBook PDF" : "eBook PDF",
-    status: row.status === "published" ? "Available" : "Available Soon",
+    status: "Available",
     isPhysicalAvailable: Boolean(row.is_physical_available),
     paymentLink: row.payment_link || "",
     downloadFilePath: row.ebook_file_path || undefined,
@@ -90,24 +98,35 @@ function parseList(value: string[] | null) {
     ? items
     : [
         "Clear Christian teaching for practical growth.",
-        "A structured message prepared for careful reading.",
+        "A well-structured message for careful reading.",
         "Biblical encouragement for faith and obedience.",
       ];
 }
 
 function mapAuthor(row: DbAuthor): Author {
   return {
+    id: row.id,
     name: row.name,
     slug: row.slug,
-    role: "Author",
+    roleTitle: row.role_title || "Author",
     bio: row.bio || "KD Global Publishing House author profile.",
     image: row.image_url || "",
+    email: row.email || undefined,
+    ministryName: row.ministry_name || undefined,
+    websiteUrl: row.website_url || undefined,
+    facebookUrl: row.facebook_url || undefined,
+    instagramUrl: row.instagram_url || undefined,
+    xUrl: row.x_url || undefined,
+    linkedinUrl: row.linkedin_url || undefined,
+    status: row.status === "hidden" ? "hidden" : "active",
+    createdAt: row.created_at || undefined,
+    updatedAt: row.updated_at || undefined,
   };
 }
 
 export async function getPublishedBooks(): Promise<Book[]> {
   if (!hasSupabaseServerEnv()) {
-    return fallbackBooks;
+    return [];
   }
 
   const supabase = createAdminClient();
@@ -119,7 +138,7 @@ export async function getPublishedBooks(): Promise<Book[]> {
     .order("created_at", { ascending: false });
 
   if (error || !data?.length) {
-    return fallbackBooks;
+    return [];
   }
 
   return (data as DbBook[]).map(mapBook);
@@ -127,7 +146,7 @@ export async function getPublishedBooks(): Promise<Book[]> {
 
 export async function getBookBySlugFromCatalog(slug: string): Promise<Book | undefined> {
   if (!hasSupabaseServerEnv()) {
-    return fallbackBooks.find((book) => book.slug === slug);
+    return undefined;
   }
 
   const supabase = createAdminClient();
@@ -139,7 +158,7 @@ export async function getBookBySlugFromCatalog(slug: string): Promise<Book | und
     .maybeSingle();
 
   if (error || !data) {
-    return fallbackBooks.find((book) => book.slug === slug);
+    return undefined;
   }
 
   return mapBook(data as DbBook);
@@ -147,20 +166,21 @@ export async function getBookBySlugFromCatalog(slug: string): Promise<Book | und
 
 export async function getAuthorsFromCatalog(): Promise<Author[]> {
   if (!hasSupabaseServerEnv()) {
-    return fallbackAuthors;
+    return [];
   }
 
   const supabase = createAdminClient();
   const { data, error } = await supabase
     .from("authors")
     .select("*")
+    .eq("status", "active")
     .order("created_at", { ascending: false });
 
-  if (error || !data?.length) {
-    return fallbackAuthors;
+  if (error) {
+    return [];
   }
 
-  return (data as DbAuthor[]).map(mapAuthor);
+  return ((data || []) as DbAuthor[]).map(mapAuthor);
 }
 
 export async function getAuthorBySlugFromCatalog(slug: string): Promise<Author | undefined> {

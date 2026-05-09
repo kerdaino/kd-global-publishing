@@ -49,7 +49,7 @@ export function CheckoutVerifier({ reference }: { reference?: string }) {
         setState({
           status: "success",
           message: result.data?.emailSent
-            ? "Payment confirmed. Your download email has been prepared."
+            ? "Payment confirmed. Your download email is on its way."
             : "Your payment was successful. You can download your book below. If you need help, contact support.",
           details: result.data,
         });

@@ -5,7 +5,7 @@ import { createPageMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = createPageMetadata({
   title: "Print Request",
-  description: "Request physical book printing and production support.",
+  description: "Request physical book printing and production support from KD Global Publishing House.",
   path: "/print-request",
 });
 
@@ -18,7 +18,7 @@ export default function PrintRequestPage() {
             headingLevel="h1"
             eyebrow="Physical Books"
             title="Plan print production with care."
-            description="KD Global Publishing House supports physical book ordering, print coordination, and production support for authors and ministries."
+            description="KD Global Publishing House helps authors and ministries prepare physical books with thoughtful print planning and production coordination."
           />
           <div className="mt-8 grid gap-4">
             {["Print-ready files", "Quantity planning", "Production coordination"].map((item) => (

@@ -9,7 +9,7 @@ import { createPageMetadata } from "@/lib/metadata";
 export const metadata: Metadata = createPageMetadata({
   title: "Christian Publishing, eBooks, and Sermon-to-Book Services",
   description:
-    "KD Global Publishing House helps authors, ministers, and ministries turn manuscripts, sermons, and Christian teachings into beautifully edited, market-ready books.",
+    "KD Global Publishing House helps Christian authors, ministers, and ministries shape manuscripts, sermons, and teachings into excellent books.",
   path: "/",
 });
 
@@ -17,13 +17,13 @@ const whatWeDo = [
   {
     title: "eBook Publishing & Sales",
     description:
-      "A growing Christian bookstore for eBooks, devotionals, ministry resources, teaching series, and faith-based titles.",
+      "Christian eBooks, devotionals, sermon books, and ministry resources prepared for readers who value sound teaching.",
     href: "/bookstore",
   },
   {
     title: "Publishing Services",
     description:
-      "Editing, manuscript expansion, formatting, cover design direction, publishing support, and print preparation for authors and ministries.",
+      "Careful editing, manuscript development, formatting, cover direction, publishing support, and print preparation for authors and ministries.",
     href: "/publishing-services",
   },
   {
@@ -59,7 +59,7 @@ export default async function Home() {
             <p className="mt-6 max-w-2xl text-lg leading-8 text-neutral-650">
               KD Global Publishing House helps authors, ministers, and
               ministries turn manuscripts, sermons, and Christian teachings into
-              beautifully edited, market-ready books.
+              well-edited books ready to serve readers.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
@@ -79,14 +79,14 @@ export default async function Home() {
 
           <div className="rounded-lg border border-neutral-200 bg-neutral-950 p-6 text-white shadow-2xl">
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-red-300">
-              Christian publishing platform
+              Christian publishing care
             </p>
             <h2 className="mt-5 text-3xl font-black tracking-tight">
               Write. Edit. Publish. Sell. Distribute.
             </h2>
             <p className="mt-4 text-base leading-8 text-neutral-300">
-              Built for Christian books, sermon resources, eBooks, and physical
-              print coordination under the KD Global brand.
+              Editorial care, digital publishing, and print preparation for
+              Christian books, sermon resources, and ministry teaching.
             </p>
             <div className="mt-8 grid gap-3">
               {["Manuscripts", "Sermons", "Teachings", "Devotionals"].map(
@@ -108,8 +108,8 @@ export default async function Home() {
         <div className="mx-auto max-w-6xl">
           <SectionHeader
             eyebrow="Featured Books"
-            title="Truth-filled books prepared for readers."
-            description="Featured titles from KD Global Publishing House will appear here as books are published and released."
+            title="Truth-filled books for thoughtful readers."
+            description="Explore published titles from KD Global Publishing House."
             align="center"
           />
           {featuredBooks.length ? (
@@ -119,7 +119,7 @@ export default async function Home() {
               ))}
             </div>
           ) : (
-            <EmptyPanel message="Published books will appear here soon." />
+            <EmptyPanel message="New titles are in editorial preparation. Please check back for the published catalog." />
           )}
         </div>
       </section>
@@ -129,7 +129,7 @@ export default async function Home() {
           <SectionHeader
             eyebrow="What We Do"
             title="More than a bookstore."
-            description="KD Global Publishing House is built to help Christian books, teachings, and ministry resources reach readers through digital publishing, publishing support, and sermon-to-book production."
+            description="KD Global Publishing House helps Christian books, teachings, and ministry resources move from message to manuscript to reader."
           />
           <div className="mt-10 grid gap-6 md:grid-cols-3">
             {whatWeDo.map((item, index) => (
@@ -166,8 +166,8 @@ export default async function Home() {
               Serious care for messages that carry spiritual weight.
             </h2>
             <p className="mt-5 text-base leading-8 text-neutral-300">
-              We combine editorial structure, Christian sensitivity, product
-              packaging, and digital sales preparation for authors and ministries.
+              We bring editorial structure, Christian sensitivity, careful
+              presentation, and practical publishing support to work that matters.
             </p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -218,8 +218,8 @@ export default async function Home() {
       </section>
 
       <CTASection
-        title="KD Global Publishing House is ready to build with authors and ministries."
-        description="From eBook publishing to print distribution planning, the platform is prepared for a serious Christian publishing business."
+        title="Publish your message with care and conviction."
+        description="From eBook publishing to print preparation, we help Christian authors and ministries publish with clarity, care, and purpose."
         primaryLabel="Contact Us"
         primaryHref="/contact"
         secondaryLabel="View Services"

@@ -109,27 +109,29 @@ export default async function AdminBooksPage({
           {bookRows.map((book) => (
             <details
               key={book.id}
-              className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm"
+              className="min-w-0 overflow-hidden rounded-lg border border-neutral-200 bg-white p-6 shadow-sm"
             >
-              <summary className="cursor-pointer">
-                <span className="inline-flex items-center gap-4 align-middle">
+              <summary className="min-w-0 cursor-pointer">
+                <span className="flex min-w-0 items-center gap-4 align-middle">
                   {book.cover_image_url ? (
                     <span className="aspect-[5/8] w-14 shrink-0 overflow-hidden rounded-md bg-neutral-100">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={book.cover_image_url}
                         alt={`${book.title} cover`}
-                        className="h-full w-full object-cover"
+                        className="block h-full w-full object-cover"
                       />
                     </span>
                   ) : null}
-                  <span>
-                    <span className="font-black text-neutral-950">{book.title}</span>
-                    <span className="ml-3 rounded-md bg-neutral-100 px-3 py-1 text-sm font-semibold text-neutral-700">
+                  <span className="flex min-w-0 flex-wrap items-center gap-2">
+                    <span className="min-w-0 break-words font-black text-neutral-950">
+                      {book.title}
+                    </span>
+                    <span className="rounded-md bg-neutral-100 px-3 py-1 text-sm font-semibold text-neutral-700">
                       {book.status}
                     </span>
                     {book.is_featured ? (
-                      <span className="ml-2 rounded-md bg-red-50 px-3 py-1 text-sm font-semibold text-red-700">
+                      <span className="rounded-md bg-red-50 px-3 py-1 text-sm font-semibold text-red-700">
                         Featured
                       </span>
                     ) : null}

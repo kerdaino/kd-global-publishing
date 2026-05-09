@@ -7,7 +7,7 @@ import { createPageMetadata } from "@/lib/metadata";
 export const metadata: Metadata = createPageMetadata({
   title: "Bookstore",
   description:
-    "Explore eBooks, sermon books, devotionals, and Christian teaching resources from KD Global Publishing House.",
+    "Browse Christian eBooks, sermon books, devotionals, and ministry resources from KD Global Publishing House.",
   path: "/bookstore",
 });
 
@@ -19,7 +19,7 @@ export default async function BookstorePage() {
       <div className="mx-auto max-w-6xl">
         <SectionHeader
           title="Bookstore"
-          description="Explore eBooks, sermon books, devotionals, and Christian teaching resources from KD Global Publishing House."
+          description="Browse Christian eBooks, sermon books, devotionals, and ministry resources from KD Global Publishing House."
           headingLevel="h1"
         />
         {books.length ? (
@@ -31,10 +31,10 @@ export default async function BookstorePage() {
         ) : (
           <div className="mt-10 rounded-lg border border-neutral-200 bg-white p-10 text-center">
             <h2 className="text-2xl font-black text-neutral-950">
-              No published books yet.
+              New books are in editorial preparation.
             </h2>
             <p className="mt-3 text-neutral-650">
-              Books marked as published in Supabase will appear here.
+              Published titles from KD Global Publishing House will be available here as they are released.
             </p>
           </div>
         )}
