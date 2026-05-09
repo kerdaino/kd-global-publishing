@@ -48,7 +48,10 @@ export function Navbar() {
             <Logo shortText="Publishing House" />
           </Link>
 
-          <div className="hidden min-w-0 items-center justify-end gap-1 text-sm font-semibold text-neutral-700 dark:text-[#eadfd6] xl:flex">
+          <div
+            data-nav-desktop
+            className="hidden min-w-0 items-center justify-end gap-1 text-sm font-semibold text-neutral-700 dark:text-[#eadfd6] xl:flex"
+          >
             {site.navLinks.map((link) => (
               <NavLink
                 key={link.href}
@@ -65,6 +68,7 @@ export function Navbar() {
             aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={isOpen}
             aria-controls="mobile-navigation"
+            data-nav-menu-button
             onClick={() => setIsOpen((current) => !current)}
             className="inline-flex size-11 shrink-0 items-center justify-center rounded-md border border-neutral-300 text-neutral-950 transition hover:border-red-700 hover:text-red-700 focus:outline-none focus:ring-4 focus:ring-red-100 xl:hidden"
           >
@@ -99,6 +103,7 @@ export function Navbar() {
           id="mobile-navigation"
           role="region"
           aria-label="Mobile navigation"
+          data-nav-mobile
           className={
             isOpen
               ? "grid min-w-0 overflow-hidden border-t border-neutral-200 py-4 xl:hidden"
