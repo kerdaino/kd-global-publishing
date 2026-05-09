@@ -1,4 +1,4 @@
--- KD Global Publishing House Supabase schema
+-- The Scribe House Supabase schema
 -- Run this in the Supabase SQL editor or convert it into a migration.
 
 create extension if not exists pgcrypto;

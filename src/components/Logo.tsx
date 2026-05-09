@@ -21,11 +21,11 @@ export function Logo({
         aria-hidden="true"
         className={
           isDark
-            ? "flex size-11 shrink-0 items-center justify-center rounded-md bg-white text-base font-black text-red-700"
-            : "flex size-11 shrink-0 items-center justify-center rounded-md bg-red-700 text-base font-black text-white"
+            ? "flex size-11 shrink-0 items-center justify-center rounded-md bg-white text-sm font-black text-red-700"
+            : "flex size-11 shrink-0 items-center justify-center rounded-md bg-red-700 text-sm font-black text-white"
         }
       >
-        KD
+        TSH
       </span>
       {showText ? (
         <span className="min-w-0 max-w-full">

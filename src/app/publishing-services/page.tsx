@@ -78,7 +78,7 @@ export default function PublishingServicesPage() {
               From manuscript to market-ready book.
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-neutral-650">
-              KD Global Publishing House helps Christian authors, ministers,
+              The Scribe House helps Christian authors, ministers,
               and ministries with editing, manuscript development, formatting,
               cover direction, eBook publishing, and print preparation.
             </p>
@@ -175,7 +175,7 @@ export default function PublishingServicesPage() {
 
       <CTASection
         title="Start a publishing project"
-        description="Whether you have a manuscript, a sermon series, a teaching outline, or only the seed of a book idea, KD Global Publishing House can help you take the next step."
+        description="Whether you have a manuscript, a sermon series, a teaching outline, or only the seed of a book idea, The Scribe House can help you take the next step."
         primaryLabel="Start a Publishing Project"
         primaryHref="/contact"
       />

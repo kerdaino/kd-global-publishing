@@ -163,7 +163,7 @@ export default async function AdminBooksPage({
       ) : (
         <div className="mt-8 rounded-lg border border-neutral-200 bg-white p-8 text-neutral-650 shadow-sm">
           No books have been created yet. Use the create form above to add the
-          first KD Global Publishing House title.
+          first The Scribe House title.
         </div>
       )}
     </div>

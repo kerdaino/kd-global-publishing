@@ -198,7 +198,7 @@ export default function SermonToBookPage() {
 
       <CTASection
         title="Turn your next sermon series into a book."
-        description="Send the message, transcript, outline, or project idea. KD Global Publishing House will help you identify the strongest format and begin the publishing process."
+        description="Send the message, transcript, outline, or project idea. The Scribe House will help you identify the strongest format and begin the publishing process."
         primaryLabel="Contact Us"
         primaryHref="/contact"
       />

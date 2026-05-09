@@ -16,7 +16,7 @@ export default async function AdminLoginPage({
     <div className="mx-auto max-w-xl">
       <h1 className="text-4xl font-black text-neutral-950">Admin Login</h1>
       <p className="mt-3 text-base leading-8 text-neutral-650">
-        Sign in with your KD Global Publishing House administrator account.
+        Sign in with your The Scribe House administrator account.
       </p>
       {params.setup ? (
         <p role="alert" className="mt-5 rounded-md bg-red-50 p-4 text-sm font-semibold text-red-700">

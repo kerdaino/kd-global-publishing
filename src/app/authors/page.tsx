@@ -6,7 +6,7 @@ import { createPageMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = createPageMetadata({
   title: "Authors",
-  description: "Meet the authors and ministry voices published by KD Global Publishing House.",
+  description: "Meet the authors and ministry voices published by The Scribe House.",
   path: "/authors",
 });
 

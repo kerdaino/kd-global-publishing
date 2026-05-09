@@ -6,7 +6,7 @@ import { site } from "@/lib/site";
 
 export const metadata: Metadata = createPageMetadata({
   title: "Terms & Refund Policy",
-  description: "Terms, purchase conditions, download access, and refund policy for KD Global Publishing House.",
+  description: "Terms, purchase conditions, download access, and refund policy for The Scribe House.",
   path: "/terms",
 });
 

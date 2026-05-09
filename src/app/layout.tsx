@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   publisher: site.name,
   keywords: [
     "Christian publishing",
-    "KD Global Publishing House",
+    "The Scribe House",
     "Christian eBooks",
     "sermon to book",
     "publishing services",

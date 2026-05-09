@@ -39,9 +39,12 @@ type DbBook = {
   what_readers_will_learn: string[] | null;
   format: string | null;
   status: string | null;
+  is_featured: boolean | null;
   is_physical_available: boolean | null;
   authors: DbAuthor | null;
 };
+
+const PUBLISHED_BOOK_STATUS = "published";
 
 function hasSupabaseServerEnv() {
   return Boolean(
@@ -70,7 +73,7 @@ function mapBook(row: DbBook): Book {
     title: row.title,
     slug: row.slug,
     subtitle: row.subtitle || undefined,
-    author: author?.name || "KD Global Publishing House",
+    author: author?.name || "The Scribe House",
     authorSlug: author?.slug || "kd-global-publishing-house",
     category: row.category || "Christian Teaching",
     price: formatPrice(Number(row.price), row.currency || "NGN"),
@@ -109,7 +112,7 @@ function mapAuthor(row: DbAuthor): Author {
     name: row.name,
     slug: row.slug,
     roleTitle: row.role_title || "Author",
-    bio: row.bio || "KD Global Publishing House author profile.",
+    bio: row.bio || "The Scribe House author profile.",
     image: row.image_url || "",
     email: row.email || undefined,
     ministryName: row.ministry_name || undefined,
@@ -133,8 +136,7 @@ export async function getPublishedBooks(): Promise<Book[]> {
   const { data, error } = await supabase
     .from("books")
     .select("*, authors(*)")
-    .eq("status", "published")
-    .order("is_featured", { ascending: false })
+    .eq("status", PUBLISHED_BOOK_STATUS)
     .order("created_at", { ascending: false });
 
   if (error || !data?.length) {
@@ -144,7 +146,28 @@ export async function getPublishedBooks(): Promise<Book[]> {
   return (data as DbBook[]).map(mapBook);
 }
 
-export async function getBookBySlugFromCatalog(slug: string): Promise<Book | undefined> {
+export async function getFeaturedPublishedBooks(limit = 3): Promise<Book[]> {
+  if (!hasSupabaseServerEnv()) {
+    return [];
+  }
+
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("books")
+    .select("*, authors(*)")
+    .eq("status", PUBLISHED_BOOK_STATUS)
+    .eq("is_featured", true)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error || !data?.length) {
+    return [];
+  }
+
+  return (data as DbBook[]).map(mapBook);
+}
+
+export async function getPublishedBookBySlug(slug: string): Promise<Book | undefined> {
   if (!hasSupabaseServerEnv()) {
     return undefined;
   }
@@ -154,7 +177,7 @@ export async function getBookBySlugFromCatalog(slug: string): Promise<Book | und
     .from("books")
     .select("*, authors(*)")
     .eq("slug", slug)
-    .eq("status", "published")
+    .eq("status", PUBLISHED_BOOK_STATUS)
     .maybeSingle();
 
   if (error || !data) {
@@ -162,6 +185,26 @@ export async function getBookBySlugFromCatalog(slug: string): Promise<Book | und
   }
 
   return mapBook(data as DbBook);
+}
+
+export async function getPublishedBooksByAuthor(authorId: string): Promise<Book[]> {
+  if (!hasSupabaseServerEnv()) {
+    return [];
+  }
+
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("books")
+    .select("*, authors(*)")
+    .eq("status", PUBLISHED_BOOK_STATUS)
+    .eq("author_id", authorId)
+    .order("created_at", { ascending: false });
+
+  if (error || !data?.length) {
+    return [];
+  }
+
+  return (data as DbBook[]).map(mapBook);
 }
 
 export async function getAuthorsFromCatalog(): Promise<Author[]> {

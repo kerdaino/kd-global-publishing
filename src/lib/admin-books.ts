@@ -65,7 +65,7 @@ export async function saveAdminBook(payload: BookPayload, id?: string) {
     throw new Error(result.error.message);
   }
 
-  revalidateBookPaths();
+  revalidateBookPaths(bookData.slug);
 
   return result.data as { id: string };
 }
@@ -77,14 +77,14 @@ export async function archiveAdminBook(id: string) {
     .from("books")
     .update({ status: "archived" })
     .eq("id", id)
-    .select("id")
+    .select("id, slug")
     .single();
 
   if (error || !data) {
     throw new Error(error?.message || "Unable to archive book.");
   }
 
-  revalidateBookPaths();
+  revalidateBookPaths((data as { slug?: string | null }).slug);
 
   return data as { id: string };
 }
@@ -107,13 +107,19 @@ export async function hardDeleteAdminBook(id: string) {
     throw new Error("This book has paid orders. Archive it instead of permanently deleting it.");
   }
 
+  const { data: book } = await supabase
+    .from("books")
+    .select("slug")
+    .eq("id", id)
+    .maybeSingle();
+
   const { error } = await supabase.from("books").delete().eq("id", id);
 
   if (error) {
     throw new Error(error.message);
   }
 
-  revalidateBookPaths();
+  revalidateBookPaths((book as { slug?: string | null } | null)?.slug);
 
   return { id };
 }
@@ -132,9 +138,14 @@ function validateBookPayload(payload: BookPayload) {
   }
 }
 
-function revalidateBookPaths() {
+function revalidateBookPaths(slug?: string | null) {
+  revalidatePath("/");
   revalidatePath("/admin/books");
   revalidatePath("/bookstore");
+  revalidatePath("/authors");
+  if (slug) {
+    revalidatePath(`/books/${slug}`);
+  }
 }
 
 function text(input: unknown) {

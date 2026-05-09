@@ -7,7 +7,7 @@ import { createPageMetadata } from "@/lib/metadata";
 export const metadata: Metadata = createPageMetadata({
   title: "Bookstore",
   description:
-    "Browse Christian eBooks, sermon books, devotionals, and ministry resources from KD Global Publishing House.",
+    "Browse Christian eBooks, sermon books, devotionals, and ministry resources from The Scribe House.",
   path: "/bookstore",
 });
 
@@ -19,7 +19,7 @@ export default async function BookstorePage() {
       <div className="mx-auto max-w-6xl">
         <SectionHeader
           title="Bookstore"
-          description="Browse Christian eBooks, sermon books, devotionals, and ministry resources from KD Global Publishing House."
+          description="Browse Christian eBooks, sermon books, devotionals, and ministry resources from The Scribe House."
           headingLevel="h1"
         />
         {books.length ? (
@@ -34,7 +34,7 @@ export default async function BookstorePage() {
               New books are in editorial preparation.
             </h2>
             <p className="mt-3 text-neutral-650">
-              Published titles from KD Global Publishing House will be available here as they are released.
+              Published titles from The Scribe House will be available here as they are released.
             </p>
           </div>
         )}

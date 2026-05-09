@@ -22,7 +22,7 @@ export function CTASection({
       <div className="mx-auto flex max-w-6xl flex-col gap-8 md:flex-row md:items-center md:justify-between">
         <div className="max-w-2xl">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-red-300">
-            KD Global
+            The Scribe House
           </p>
           <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
             {title}

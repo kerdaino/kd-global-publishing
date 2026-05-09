@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CTASection } from "@/components/CTASection";
 import { BookCheckoutForm } from "@/components/forms/BookCheckoutForm";
-import { getBookBySlugFromCatalog } from "@/lib/catalog";
+import { getPublishedBookBySlug } from "@/lib/catalog";
 import { createPageMetadata } from "@/lib/metadata";
 
 type BookPageProps = {
@@ -18,7 +18,7 @@ export async function generateMetadata({
   params,
 }: BookPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const book = await getBookBySlugFromCatalog(slug);
+  const book = await getPublishedBookBySlug(slug);
 
   if (!book) {
     return {
@@ -35,7 +35,7 @@ export async function generateMetadata({
 
 export default async function BookPage({ params }: BookPageProps) {
   const { slug } = await params;
-  const book = await getBookBySlugFromCatalog(slug);
+  const book = await getPublishedBookBySlug(slug);
 
   if (!book) {
     notFound();
@@ -64,7 +64,7 @@ export default async function BookPage({ params }: BookPageProps) {
                   <div className="flex aspect-[5/8] w-full items-center justify-center overflow-hidden rounded-md bg-gradient-to-br from-neutral-950 via-red-950 to-red-700 p-6 text-center text-white sm:p-8">
                     <div className="min-w-0">
                       <p className="text-sm font-semibold uppercase tracking-[0.22em] text-red-100">
-                        KD Global
+                        The Scribe House
                       </p>
                       <h1 className="mt-8 break-words text-3xl font-black tracking-tight sm:mt-10 sm:text-5xl">
                         {book.title}
@@ -242,7 +242,7 @@ export default async function BookPage({ params }: BookPageProps) {
 
       <CTASection
         title="Want to publish your own book?"
-        description="KD Global Publishing House helps authors, ministers, and ministries shape manuscripts, sermons, and Christian teachings into books that can serve readers well."
+        description="The Scribe House helps authors, ministers, and ministries shape manuscripts, sermons, and Christian teachings into books that can serve readers well."
         primaryLabel="Start a Publishing Inquiry"
         primaryHref="/contact"
         secondaryLabel="View Publishing Services"

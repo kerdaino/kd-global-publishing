@@ -10,7 +10,7 @@ import { downloadPolicyText } from "@/lib/download-policy";
 
 export const metadata: Metadata = {
   title: "Secure Download",
-  description: "Secure eBook download page for KD Global Publishing House customers.",
+  description: "Secure eBook download page for The Scribe House customers.",
   robots: {
     index: false,
     follow: false,

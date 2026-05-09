@@ -3,13 +3,13 @@ import Link from "next/link";
 import { BookCard } from "@/components/BookCard";
 import { CTASection } from "@/components/CTASection";
 import { SectionHeader } from "@/components/SectionHeader";
-import { getPublishedBooks } from "@/lib/catalog";
+import { getFeaturedPublishedBooks } from "@/lib/catalog";
 import { createPageMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = createPageMetadata({
   title: "Christian Publishing, eBooks, and Sermon-to-Book Services",
   description:
-    "KD Global Publishing House helps Christian authors, ministers, and ministries shape manuscripts, sermons, and teachings into excellent books.",
+    "The Scribe House helps Christian authors, ministers, and ministries shape manuscripts, sermons, and teachings into excellent books.",
   path: "/",
 });
 
@@ -42,8 +42,7 @@ const whyPublish = [
 ];
 
 export default async function Home() {
-  const books = await getPublishedBooks();
-  const featuredBooks = books.slice(0, 3);
+  const featuredBooks = await getFeaturedPublishedBooks();
 
   return (
     <>
@@ -51,13 +50,13 @@ export default async function Home() {
         <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[1.08fr_0.92fr] lg:items-center">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-red-700">
-              KD Global Publishing House
+              The Scribe House
             </p>
             <h1 className="mt-5 max-w-4xl text-4xl font-black tracking-tight text-neutral-950 sm:text-6xl">
               Publish truth-filled books that teach, transform, and endure.
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-neutral-650">
-              KD Global Publishing House helps authors, ministers, and
+              The Scribe House helps authors, ministers, and
               ministries turn manuscripts, sermons, and Christian teachings into
               well-edited books ready to serve readers.
             </p>
@@ -109,7 +108,7 @@ export default async function Home() {
           <SectionHeader
             eyebrow="Featured Books"
             title="Truth-filled books for thoughtful readers."
-            description="Explore published titles from KD Global Publishing House."
+            description="Explore published titles from The Scribe House."
             align="center"
           />
           {featuredBooks.length ? (
@@ -129,7 +128,7 @@ export default async function Home() {
           <SectionHeader
             eyebrow="What We Do"
             title="More than a bookstore."
-            description="KD Global Publishing House helps Christian books, teachings, and ministry resources move from message to manuscript to reader."
+            description="The Scribe House helps Christian books, teachings, and ministry resources move from message to manuscript to reader."
           />
           <div className="mt-10 grid gap-6 md:grid-cols-3">
             {whatWeDo.map((item, index) => (

@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Checkout Failed",
-  description: "Get help after an incomplete KD Global Publishing House checkout.",
+  description: "Get help after an incomplete The Scribe House checkout.",
   robots: {
     index: false,
     follow: false,

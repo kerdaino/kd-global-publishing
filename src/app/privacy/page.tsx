@@ -6,7 +6,7 @@ import { site } from "@/lib/site";
 
 export const metadata: Metadata = createPageMetadata({
   title: "Privacy Policy",
-  description: "How KD Global Publishing House collects, uses, and protects customer and inquiry information.",
+  description: "How The Scribe House collects, uses, and protects customer and inquiry information.",
   path: "/privacy",
 });
 

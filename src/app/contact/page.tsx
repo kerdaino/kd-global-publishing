@@ -8,7 +8,7 @@ import { site } from "@/lib/site";
 export const metadata: Metadata = createPageMetadata({
   title: "Contact",
   description:
-    "Contact KD Global Publishing House about books, publishing support, sermon-to-book projects, or print requests.",
+    "Contact The Scribe House about books, publishing support, sermon-to-book projects, or print requests.",
   path: "/contact",
 });
 

@@ -3,7 +3,7 @@ import { CheckoutVerifier } from "@/components/checkout/CheckoutVerifier";
 
 export const metadata: Metadata = {
   title: "Checkout Successful",
-  description: "Verify a successful KD Global Publishing House book payment.",
+  description: "Verify a successful The Scribe House book payment.",
   robots: {
     index: false,
     follow: false,

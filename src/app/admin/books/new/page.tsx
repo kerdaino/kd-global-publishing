@@ -26,7 +26,7 @@ export default async function NewBookPage() {
       </Link>
       <h1 className="mt-4 text-4xl font-black text-neutral-950">Create Book</h1>
       <p className="mt-3 max-w-3xl text-base leading-8 text-neutral-650">
-        Add a new title to the KD Global Publishing House catalog.
+        Add a new title to the The Scribe House catalog.
       </p>
       <div className="mt-8">
         <AdminBookForm authors={authors} mode="create" />

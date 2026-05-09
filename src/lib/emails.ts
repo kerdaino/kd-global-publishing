@@ -58,7 +58,7 @@ function layout(title: string, body: string) {
     <div style="font-family: Arial, sans-serif; background:#f5f5f5; padding:24px;">
       <div style="max-width:640px; margin:0 auto; background:#ffffff; border:1px solid #e5e5e5;">
         <div style="background:#171717; color:#ffffff; padding:24px;">
-          <p style="margin:0; color:#fca5a5; font-size:12px; letter-spacing:2px; text-transform:uppercase;">KD Global Publishing House</p>
+          <p style="margin:0; color:#fca5a5; font-size:12px; letter-spacing:2px; text-transform:uppercase;">The Scribe House</p>
           <h1 style="margin:12px 0 0; font-size:26px; line-height:1.25;">${escapeHtml(title)}</h1>
         </div>
         <div style="padding:24px; color:#262626; font-size:15px; line-height:1.7;">
@@ -79,7 +79,7 @@ function row(label: string, value: unknown) {
 
 export function orderConfirmationEmail(input: OrderConfirmationInput) {
   return {
-    subject: "Your KD Global Publishing House eBook is ready",
+    subject: "Your The Scribe House eBook is ready",
     html: layout(
       "Your eBook is ready",
       `

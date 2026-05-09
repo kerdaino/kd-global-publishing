@@ -29,7 +29,7 @@ export function BookCard({ book }: BookCardProps) {
           <div className="flex aspect-[5/8] w-full items-center justify-center overflow-hidden rounded-t-lg bg-gradient-to-br from-neutral-950 via-red-950 to-red-700 p-8 text-center text-white">
             <div className="min-w-0">
               <p className="text-sm font-semibold uppercase tracking-[0.22em] text-red-100">
-                KD Global
+                The Scribe House
               </p>
               <p className="mt-8 break-words text-3xl font-black tracking-tight sm:text-4xl">
                 {book.title}

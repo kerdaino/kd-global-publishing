@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AuthorAvatar } from "@/components/AuthorAvatar";
 import { BookCard } from "@/components/BookCard";
-import { getAuthorBySlugFromCatalog, getPublishedBooks } from "@/lib/catalog";
+import { getAuthorBySlugFromCatalog, getPublishedBooksByAuthor } from "@/lib/catalog";
 import { createPageMetadata } from "@/lib/metadata";
 
 type AuthorPageProps = {
@@ -22,7 +22,7 @@ export async function generateMetadata({
 
   return createPageMetadata({
     title: author?.name || "Author Not Found",
-    description: author?.bio || "Author profile from KD Global Publishing House.",
+    description: author?.bio || "Author profile from The Scribe House.",
     path: `/authors/${slug}`,
   });
 }
@@ -35,8 +35,7 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
     notFound();
   }
 
-  const catalogBooks = await getPublishedBooks();
-  const authorBooks = catalogBooks.filter((book) => book.authorSlug === author.slug);
+  const authorBooks = author.id ? await getPublishedBooksByAuthor(author.id) : [];
 
   return (
     <section className="bg-white px-6 py-16 sm:py-20">

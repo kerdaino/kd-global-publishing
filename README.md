@@ -1,6 +1,6 @@
-# KD Global Publishing House
+# The Scribe House
 
-KD Global Publishing House is a Christian publishing platform built by KD Global.
+The Scribe House is a Christian publishing platform built by KD Global.
 
 Portfolio: [https://www.kdevglobal.com](https://www.kdevglobal.com)
 

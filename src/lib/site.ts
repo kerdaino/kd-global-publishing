@@ -1,7 +1,7 @@
 const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || "";
 
 export const site = {
-  name: "KD Global Publishing House",
+  name: "The Scribe House",
   parentBrand: "KD Global",
   portfolioUrl: "https://www.kdevglobal.com",
   description:
