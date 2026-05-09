@@ -2,9 +2,6 @@ import Link from "next/link";
 import { site } from "@/lib/site";
 
 export function Footer() {
-  const whatsappNumber = site.whatsapp.replace(/\D/g, "");
-  const whatsappUrl = `https://wa.me/${whatsappNumber}`;
-
   return (
     <footer className="border-t border-neutral-200 bg-white px-6 py-12 sm:py-16">
       <div className="mx-auto grid max-w-6xl gap-10 sm:grid-cols-2 lg:grid-cols-[1.35fr_0.9fr_1fr] lg:gap-12">
@@ -37,18 +34,21 @@ export function Footer() {
                 {site.email}
               </Link>
             ) : null}
-            {site.phone ? <p>{site.phone}</p> : null}
+            <Link
+              href={site.phoneHref}
+              className="w-fit rounded-sm transition duration-200 hover:text-red-700 focus-visible:text-red-700"
+            >
+              {site.phone}
+            </Link>
             {site.address ? <p>{site.address}</p> : null}
-            {whatsappNumber ? (
-              <Link
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-1 inline-flex min-h-11 w-fit items-center justify-center rounded-md bg-green-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-green-700"
-              >
-                Chat on WhatsApp
-              </Link>
-            ) : null}
+            <Link
+              href={site.whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-1 inline-flex min-h-11 w-fit items-center justify-center rounded-md bg-green-700 px-4 py-2 text-sm font-bold text-white transition hover:bg-green-800"
+            >
+              Chat on WhatsApp
+            </Link>
           </div>
         </div>
       </div>

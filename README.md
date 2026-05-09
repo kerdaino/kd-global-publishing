@@ -47,14 +47,11 @@ RESEND_FROM_EMAIL=
 ADMIN_NOTIFY_EMAIL=
 
 NEXT_PUBLIC_CONTACT_EMAIL=
-NEXT_PUBLIC_CONTACT_PHONE=
-NEXT_PUBLIC_CONTACT_WHATSAPP=
-NEXT_PUBLIC_CONTACT_ADDRESS=
 ```
 
 Only `NEXT_PUBLIC_*` values are available to browser code. Keep `SUPABASE_SERVICE_ROLE_KEY`, `PAYSTACK_SECRET_KEY`, and `RESEND_API_KEY` server-side only.
 
-Contact fields are optional. If an official publishing email, phone, WhatsApp number, or address is not ready, leave the matching public contact variable empty and the site will hide that field.
+The public publishing contact phone and WhatsApp number are managed in `src/lib/site.ts` as `+2347011780857` and `https://wa.me/2347011780857`. The public email is optional and should be set with `NEXT_PUBLIC_CONTACT_EMAIL` only when an official publishing email is ready; if it is empty, the email link is hidden.
 
 ## Local Development
 
@@ -164,7 +161,7 @@ Dashboard areas:
 - Paystack callback and webhook URLs configured
 - Resend sender verified
 - Admin notification email set
-- Public contact values confirmed or left empty
+- Public phone, WhatsApp, Lagos location, and optional publishing email confirmed
 - `npm run lint` passes
 - `npm run build` passes
 - Public navigation has no admin links

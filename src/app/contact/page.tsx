@@ -36,9 +36,6 @@ const contactCards = [
 ];
 
 export default function ContactPage() {
-  const whatsappNumber = site.whatsapp.replace(/\D/g, "");
-  const whatsappUrl = `https://wa.me/${whatsappNumber}`;
-
   return (
     <section className="bg-neutral-50 px-6 py-16 sm:py-20">
       <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.9fr_1.1fr]">
@@ -71,28 +68,21 @@ export default function ContactPage() {
                 {site.email}
               </Link>
             ) : null}
-            {site.phone ? <p>{site.phone}</p> : null}
+            <Link
+              href={site.phoneHref}
+              className="mt-4 block w-fit text-white transition hover:text-red-200"
+            >
+              {site.phone}
+            </Link>
             {site.address ? <p>{site.address}</p> : null}
-            {whatsappNumber ? (
-              <Link
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-3 inline-flex min-h-11 w-fit items-center justify-center rounded-md bg-green-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-green-700"
-              >
-                Chat on WhatsApp
-              </Link>
-            ) : null}
-            {!site.email && !site.phone && !site.address && !whatsappNumber ? (
-              <Link
-                href={site.portfolioUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-4 block w-fit text-white transition hover:text-red-200"
-              >
-                Visit KD Global
-              </Link>
-            ) : null}
+            <Link
+              href={site.whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex min-h-12 w-full items-center justify-center rounded-md bg-green-700 px-5 py-3 text-sm font-bold text-white transition hover:bg-green-800 sm:w-fit"
+            >
+              Chat on WhatsApp
+            </Link>
           </div>
         </div>
 
