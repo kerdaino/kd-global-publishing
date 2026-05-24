@@ -16,12 +16,24 @@ async function handleVerify(reference: string | null) {
   }
 
   if (result.data.status !== "success") {
+    console.info("Paystack verification status", {
+      paystackReference: result.data.reference,
+      paidAmount: result.data.amount,
+      verificationStatus: result.data.status,
+    });
     return jsonError(`Payment status is ${result.data.status}.`, 402);
   }
+
+  console.info("Paystack verification status", {
+    paystackReference: result.data.reference,
+    paidAmount: result.data.amount,
+    verificationStatus: result.data.status,
+  });
 
   const confirmation = await fulfillPaidOrder({
     reference: result.data.reference,
     paystackAmount: result.data.amount,
+    paystackStatus: result.data.status,
     paidAt: result.data.paid_at || result.data.paidAt,
   });
 

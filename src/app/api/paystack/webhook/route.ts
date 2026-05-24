@@ -40,12 +40,24 @@ export async function POST(request: Request) {
     const verified = await verifyPaystackTransaction(event.data.reference);
 
     if (!verified.status || !verified.data || verified.data.status !== "success") {
+      console.info("Paystack webhook verification status", {
+        paystackReference: event.data.reference,
+        paidAmount: verified.data?.amount,
+        verificationStatus: verified.data?.status || verified.message,
+      });
       return jsonError("Webhook transaction could not be verified.", 400);
     }
+
+    console.info("Paystack webhook verification status", {
+      paystackReference: verified.data.reference,
+      paidAmount: verified.data.amount,
+      verificationStatus: verified.data.status,
+    });
 
     const confirmation = await fulfillPaidOrder({
       reference: verified.data.reference,
       paystackAmount: verified.data.amount,
+      paystackStatus: verified.data.status,
       paidAt: verified.data.paid_at || verified.data.paidAt,
     });
 

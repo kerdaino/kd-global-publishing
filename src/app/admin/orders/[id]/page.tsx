@@ -13,6 +13,8 @@ type OrderDetail = {
   customer_email: string;
   customer_phone: string | null;
   amount: number;
+  amount_paid: number | null;
+  paystack_fee: number | null;
   currency: string | null;
   paystack_reference: string;
   payment_status: string | null;
@@ -64,7 +66,9 @@ export default async function AdminOrderDetailPage({
           <h2 className="text-2xl font-black text-neutral-950">Order</h2>
           <dl className="mt-5 grid gap-4 text-sm sm:grid-cols-2">
             <Detail label="Book" value={order.books?.title || "Unknown book"} />
-            <Detail label="Amount" value={`${order.currency || "NGN"} ${Number(order.amount).toLocaleString("en-NG")}`} />
+            <Detail label="Expected amount" value={formatMoney(order.amount, order.currency)} />
+            <Detail label="Amount paid" value={formatMoney(order.amount_paid, order.currency)} />
+            <Detail label="Fee amount" value={formatMoney(order.paystack_fee, order.currency)} />
             <Detail label="Payment status" value={order.payment_status || "Unknown"} />
             <Detail label="Delivery status" value={order.delivery_status || "Pending"} />
             <Detail label="Paystack reference" value={order.paystack_reference} />
@@ -109,4 +113,12 @@ function formatDate(value: string) {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(new Date(value));
+}
+
+function formatMoney(amount: number | null | undefined, currency: string | null) {
+  if (amount === null || amount === undefined) {
+    return "Not recorded";
+  }
+
+  return `${currency || "NGN"} ${Number(amount).toLocaleString("en-NG")}`;
 }

@@ -12,6 +12,10 @@ type VerifyState = {
     customerEmail: string;
     downloadUrl: string;
     reference: string;
+    bookPriceAmount: number;
+    amountPaid: number;
+    paystackFeeAmount?: number | null;
+    currency: string;
     emailSent?: boolean;
   };
 };
@@ -97,6 +101,21 @@ export function CheckoutVerifier({ reference }: { reference?: string }) {
             <strong className="text-neutral-950">Reference:</strong>{" "}
             {state.details.reference}
           </p>
+          <p>
+            <strong className="text-neutral-950">Book price:</strong>{" "}
+            {formatMoney(state.details.bookPriceAmount, state.details.currency)}
+          </p>
+          <p>
+            <strong className="text-neutral-950">Processing fee:</strong>{" "}
+            {formatMoney(state.details.paystackFeeAmount || 0, state.details.currency)}
+          </p>
+          <p>
+            <strong className="text-neutral-950">Total paid:</strong>{" "}
+            {formatMoney(state.details.amountPaid, state.details.currency)}
+          </p>
+          <p>
+            <strong className="text-neutral-950">Payment:</strong> Confirmed
+          </p>
           <Link
             href={state.details.downloadUrl}
             className="mt-4 inline-flex rounded-md bg-red-700 px-5 py-3 text-sm font-bold text-white transition hover:bg-red-800"
@@ -120,4 +139,8 @@ export function CheckoutVerifier({ reference }: { reference?: string }) {
       </Link>
     </div>
   );
+}
+
+function formatMoney(amount: number, currency: string) {
+  return `${currency || "NGN"} ${Number(amount).toLocaleString("en-NG")}`;
 }

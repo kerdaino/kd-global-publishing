@@ -119,6 +119,8 @@ create table if not exists public.orders (
   customer_email text not null,
   customer_phone text,
   amount numeric not null,
+  amount_paid numeric,
+  paystack_fee numeric,
   currency text default 'NGN',
   paystack_reference text unique not null,
   payment_status text default 'pending',

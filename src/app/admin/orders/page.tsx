@@ -14,6 +14,8 @@ type OrderRow = {
   customer_email: string;
   customer_phone: string | null;
   amount: number;
+  amount_paid: number | null;
+  paystack_fee: number | null;
   currency: string | null;
   paystack_reference: string;
   payment_status: string | null;
@@ -64,7 +66,9 @@ export default async function AdminOrdersPage({
           <tr>
             <AdminTh>Customer</AdminTh>
             <AdminTh>Book</AdminTh>
-            <AdminTh>Amount</AdminTh>
+            <AdminTh>Expected Amount</AdminTh>
+            <AdminTh>Amount Paid</AdminTh>
+            <AdminTh>Fee Amount</AdminTh>
             <AdminTh>Payment</AdminTh>
             <AdminTh>Reference</AdminTh>
             <AdminTh>Delivery</AdminTh>
@@ -81,7 +85,13 @@ export default async function AdminOrdersPage({
               </AdminTd>
               <AdminTd>{order.books?.title || "Unknown book"}</AdminTd>
               <AdminTd>
-                {order.currency || "NGN"} {Number(order.amount).toLocaleString("en-NG")}
+                {formatMoney(order.amount, order.currency)}
+              </AdminTd>
+              <AdminTd>
+                <p>{formatMoney(order.amount_paid, order.currency)}</p>
+              </AdminTd>
+              <AdminTd>
+                {formatMoney(order.paystack_fee, order.currency)}
               </AdminTd>
               <AdminTd>{order.payment_status}</AdminTd>
               <AdminTd>{order.paystack_reference}</AdminTd>
@@ -124,4 +134,12 @@ export default async function AdminOrdersPage({
       </AdminTable>
     </div>
   );
+}
+
+function formatMoney(amount: number | null | undefined, currency: string | null) {
+  if (amount === null || amount === undefined) {
+    return "Not recorded";
+  }
+
+  return `${currency || "NGN"} ${Number(amount).toLocaleString("en-NG")}`;
 }

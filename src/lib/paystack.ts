@@ -57,6 +57,8 @@ type OrderWithBook = {
   delivery_status: string | null;
   created_at: string;
   paid_at: string | null;
+  amount_paid: number | null;
+  paystack_fee: number | null;
   books: {
     id: string;
     title: string;
@@ -76,6 +78,10 @@ export function createPaymentReference() {
 
 export function nairaToKobo(amount: number) {
   return Math.round(Number(amount) * 100);
+}
+
+export function koboToNaira(amount: number) {
+  return Number(amount) / 100;
 }
 
 export async function initializePaystackTransaction({
@@ -138,10 +144,12 @@ export function verifyPaystackWebhookSignature(body: string, signature: string) 
 export async function fulfillPaidOrder({
   reference,
   paystackAmount,
+  paystackStatus,
   paidAt,
 }: {
   reference: string;
   paystackAmount: number;
+  paystackStatus: string;
   paidAt?: string;
 }) {
   const supabase = createAdminClient();
@@ -158,29 +166,65 @@ export async function fulfillPaidOrder({
 
   const typedOrder = order as OrderWithBook;
   const expectedAmount = nairaToKobo(Number(typedOrder.amount));
+  const paidAmount = Number(paystackAmount);
+  const paystackFee = Math.max(paidAmount - expectedAmount, 0);
 
-  if (expectedAmount !== Number(paystackAmount)) {
-    throw new Error("Verified amount does not match order amount.");
+  console.info("Paystack verification amount check", {
+    expectedAmount,
+    amountPaid: paidAmount,
+    paystackFee,
+    reference,
+    paystackStatus,
+  });
+
+  if (paidAmount < expectedAmount) {
+    throw new Error("Verified amount is lower than order amount.");
   }
 
-  if (typedOrder.payment_status !== "paid") {
-    const { error: updateError } = await supabase
+  const paymentAmounts: {
+    amount_paid: number;
+    paystack_fee: number;
+  } = {
+    amount_paid: koboToNaira(paidAmount),
+    paystack_fee: koboToNaira(paystackFee),
+  };
+  const wasAlreadyPaid = typedOrder.payment_status === "paid";
+  let didMarkPaid = false;
+
+  if (!wasAlreadyPaid) {
+    const { data: updatedOrder, error: updateError } = await supabase
       .from("orders")
       .update({
         payment_status: "paid",
         paid_at: paidAt || new Date().toISOString(),
+        ...paymentAmounts,
       })
-      .eq("id", typedOrder.id);
+      .eq("id", typedOrder.id)
+      .or("payment_status.is.null,payment_status.neq.paid")
+      .select("id")
+      .maybeSingle();
 
     if (updateError) {
       throw new Error("Unable to update paid order.");
+    }
+
+    didMarkPaid = Boolean(updatedOrder);
+  } else {
+    const { error: amountUpdateError } = await supabase
+      .from("orders")
+      .update(paymentAmounts)
+      .eq("id", typedOrder.id);
+
+    if (amountUpdateError) {
+      throw new Error("Unable to update paid order amounts.");
     }
   }
 
   const downloadToken = await createDownloadTokenForOrder(typedOrder.id);
 
   const downloadUrl = `${getBaseUrl()}/download/${downloadToken.token}`;
-  const shouldSendEmail = typedOrder.delivery_status !== "download_sent";
+  const shouldSendEmail =
+    didMarkPaid && typedOrder.delivery_status !== "download_sent";
   let emailSent = false;
 
   if (shouldSendEmail && isResendConfigured()) {
@@ -230,6 +274,12 @@ export async function fulfillPaidOrder({
     customerEmail: typedOrder.customer_email,
     bookTitle: typedOrder.books?.title || "Book",
     amount: typedOrder.amount,
+    book_price_amount: typedOrder.amount,
+    amount_paid: paymentAmounts.amount_paid,
+    paystack_fee_amount: paymentAmounts.paystack_fee,
+    bookPriceAmount: typedOrder.amount,
+    amountPaid: paymentAmounts.amount_paid,
+    paystackFeeAmount: paymentAmounts.paystack_fee,
     currency: typedOrder.currency || "NGN",
     downloadUrl,
     emailSent,
